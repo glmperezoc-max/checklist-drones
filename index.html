@@ -50,7 +50,7 @@ textarea{min-height:80px}
 </style>
 </head>
 <body>
-<header><div style="display:flex;flex-direction:column;gap:2px"><img src="logo.png" alt="La Hacienda" style="height:20px;width:auto;align-self:flex-start"><h1 style="font-size:13px;font-weight:500;opacity:.9">Checklist operación drones</h1></div><button id="badge">…</button></header>
+<header><div style="display:flex;flex-direction:column;gap:2px"><img src="logo.png" alt="La Hacienda" style="height:20px;width:auto;align-self:flex-start"><h1 style="font-size:13px;font-weight:500;opacity:.9">Checklist operación drones</h1></div><div style="display:flex;gap:6px;align-items:center"><button id="badge">…</button><button id="salirTop" hidden style="font-size:13px;background:rgba(0,0,0,.18);padding:5px 10px;border-radius:14px;border:0;color:#fff">⏻ Salir</button></div></header>
 <main id="app"></main>
 <script>
 /* ================= CONFIGURACIÓN ================= */
@@ -239,16 +239,28 @@ function login() {
       if (!j.ok) throw new Error(j.error === 'auth' ? 'Usuario o contraseña incorrectos' : j.error);
       LS.set('user', {u, c, nombre:j.nombre || u}); home(); sync();
     } catch (err) {
-      $('#err').innerHTML = `<div class="alerta">${esc(navigator.onLine ? err.message : 'Sin internet. El primer ingreso necesita señal.')}</div>`;
+      const m = !navigator.onLine ? 'Sin internet. El primer ingreso necesita señal.'
+        : /fetch|network|load/i.test(err.message) ? 'No se pudo conectar con el servidor. Revise la señal o avise al administrador.' : err.message;
+      $('#err').innerHTML = `<div class="alerta">${esc(m)}</div>`;
       b.disabled = false; b.textContent = 'Ingresar';
     }
   };
   badge();
 }
 
+async function salir() {
+  const n = await DB.count().catch(() => 0), op = LS.get('op', null);
+  let msg = '¿Cerrar sesión?';
+  if (op) msg = 'Hay una operación en curso (' + op.finca + '). Queda guardada en este teléfono y puede continuarla al ingresar de nuevo.\n\n' + msg;
+  if (n) msg = 'Hay ' + n + ' registro(s) sin enviar. Se enviarán cuando vuelva a ingresar con internet.\n\n' + msg;
+  if (!confirm(msg)) return;
+  LS.set('user', null); home();
+}
+
 function home() {
   scrollTo(0, 0);
   const user = LS.get('user', null);
+  $('#salirTop').hidden = !user; $('#salirTop').onclick = salir;
   if (!user) return login();
   const op = LS.get('op', null);
   let h = avisos();
@@ -257,8 +269,7 @@ function home() {
     h += `<div class="card"><h2>Nueva operación</h2><p class="hist">👤 ${esc(user.nombre)}</p><form id="fop">
       <label class="fl">Finca / Lote <b class="r">*</b><input type="text" name="finca" list="dlf" required></label>
       <datalist id="dlf">${fincas.map(f => `<option value="${esc(f)}">`).join('')}</datalist>
-      <button class="btn">▶️ Iniciar operación</button></form></div>` + histHTML() +
-      `<button class="btn sec" id="salir" style="font-size:14px;padding:10px">Cerrar sesión</button>`;
+      <button class="btn">▶️ Iniciar operación</button></form></div>` + histHTML();
     app.innerHTML = h;
     $('#fop').onsubmit = ev => {
       ev.preventDefault();
@@ -268,10 +279,6 @@ function home() {
       const d = new Date();
       LS.set('op', {id:'OP-' + stamp(d), finca:f, resp:r, ini:d.toISOString(), done:{}, nov:0});
       home();
-    };
-    $('#salir').onclick = async () => {
-      if ((await DB.count()) && !confirm('Hay registros sin enviar. Se enviarán cuando vuelva a ingresar. ¿Cerrar sesión?')) return;
-      LS.set('user', null); home();
     };
   } else {
     h += `<div class="card"><h2>📍 ${esc(op.finca)}</h2><div class="hist">👤 ${esc(op.resp)} · ${esc(op.id)}<br>Iniciada: ${fmt(op.ini)}</div></div>`;
