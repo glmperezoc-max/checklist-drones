@@ -25,7 +25,7 @@ h2{font-size:19px;margin:0 0 6px}
 h3{font-size:14px;margin:22px 0 4px;color:var(--n);text-transform:uppercase;letter-spacing:.3px;border-bottom:2px solid var(--a);padding-bottom:4px}
 .btn{display:block;width:100%;padding:15px;border:0;border-radius:10px;font-size:17px;font-weight:600;background:var(--v);color:#fff;text-align:center;text-decoration:none;margin-top:10px}
 .btn:disabled{opacity:.6}
-.btn.sec{background:#e3e7e5;color:var(--t)}.btn.wa{background:#25d366}.btn.rojo{background:var(--r)}
+.btn.sec{background:#e3e7e5;color:var(--t)}.btn.rojo{background:var(--r)}
 .etapa{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border:2px solid #dfe3e1;border-radius:10px;background:#fff;font-size:16px;font-weight:600;margin-bottom:8px;text-align:left;color:var(--t)}
 .etapa.ok{border-color:var(--v2);background:#eef6e9}
 .etapa:disabled:not(.ok){opacity:.45}
@@ -54,7 +54,6 @@ textarea{min-height:80px}
 /* ================= CONFIGURACIÓN ================= */
 const CONFIG = {
   API_URL: 'https://script.google.com/macros/s/AKfycbw4iHYEW8FeGOSVenP8edbyvfLag3eH5YdgM9eJSvH3IfNbTy6kov_jlK50Gi7NT88/exec', // URL de la implementación web de Apps Script (termina en /exec)
-  WHATSAPP: '',  // Número que recibe los reportes, ej: '573001234567'. Vacío = WhatsApp pregunta a quién enviar
 };
 /* ================================================= */
 
@@ -102,8 +101,7 @@ const ETAPAS = [
     {t:'num', k:'photon', l:'Photon', u:'L'}, {t:'text', k:'sist_nombre', l:'Sistémico (cuál)'},
     {t:'num', k:'sist_l', l:'Sistémico cantidad', u:'L'}, {t:'num', k:'atp', l:'ATP', u:'L'},
     {t:'text', k:'obs', l:'Observaciones', opt:1}]},
-  {id:'prevuelo', n:'3. Antes del vuelo + solicitar autorización', ico:'🌤️', req:'inventario',
-   wa:'🙋 SOLICITO AUTORIZACIÓN PARA INICIAR EL VUELO', f:[
+  {id:'prevuelo', n:'3. Antes del vuelo + solicitar autorización', ico:'🌤️', req:'inventario', f:[
     {t:'sec', l:'Condiciones del clima', p:'Clima'},
     {t:'num', k:'temp', l:'Temperatura', u:'°C'}, {t:'num', k:'humedad', l:'Humedad', u:'%'},
     {t:'num', k:'viento', l:'Velocidad del viento', u:'km/h'}, {t:'num', k:'presion', l:'Presión barométrica', u:'hPa'},
@@ -370,26 +368,12 @@ async function guardar(e, op, frm) {
   sync();
 }
 
-function waTexto(r, e) {
-  let t = `*${e.ico} ${e.n.toUpperCase()}*\n📍 ${r.finca}\n👤 ${r.resp}\n🕒 ${r.fechaLocal}\n`;
-  for (const f of e.f) {
-    if (f.t === 'sec') { t += `\n*${f.l}*\n`; continue; }
-    const v = r.vals[f.k]; if (!v) continue;
-    t += `• ${f.l}: ${f.t === 'photo' ? '📷 en el sistema' : v + (f.u ? ' ' + f.u : '')}${v === 'Falla' || v === 'No' ? ' ⚠️' : ''}\n`;
-  }
-  if (r.vals.area_total) t += `\n*Área total: ${r.vals.area_total} ha*\n`;
-  if (r.alertas.length) t += `\n⚠️ *ALERTAS*\n${r.alertas.map(a => '• ' + a).join('\n')}\n`;
-  if (r.gps) t += `\n🛰️ https://maps.google.com/?q=${r.gps.split(' ')[0]}\n`;
-  if (e.wa) t += `\n*${e.wa}*`;
-  return t;
-}
 function guardado(r, e) {
   const pedir = e.id === 'prevuelo';
   app.innerHTML = `<div class="card"><h2>✅ Guardado en el teléfono</h2><p class="hist">${esc(e.n)}<br>${r.fechaLocal}</p>
     ${r.alertas.length ? `<div class="alerta">⚠️ ${r.alertas.map(esc).join('<br>')}</div>` : ''}
-    <p>Se envía automáticamente al sistema cuando haya señal.</p>
-    <a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${CONFIG.WHATSAPP}?text=${encodeURIComponent(waTexto(r, e))}">📲 ${pedir ? 'Solicitar autorización por WhatsApp' : 'Enviar reporte por WhatsApp'}</a>
-    ${pedir ? '<div class="info" style="margin-top:12px">⛔ <b>No inicie el vuelo</b> hasta recibir autorización. Cuando la reciba, registre la etapa 4.</div>' : ''}
+    <p>Se envía automáticamente al sistema y por correo cuando haya señal.</p>
+    ${pedir ? '<div class="info" style="margin-top:12px">📞 <b>Solicite la autorización</b> por llamada o mensaje.<br>⛔ <b>No inicie el vuelo</b> hasta recibirla. Cuando la reciba, registre la etapa 4.</div>' : ''}
     ${e.id === 'novedad' && r.vals.accion?.startsWith('Operación suspendida') ? '<div class="info" style="margin-top:12px">🛑 Operación suspendida. Espere indicaciones antes de continuar.</div>' : ''}
     <button class="btn sec" id="ok">Volver al inicio</button></div>`;
   $('#ok').onclick = home; scrollTo(0, 0);
