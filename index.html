@@ -124,11 +124,14 @@ const ETAPAS = [
     ...conteo('ini_'),
     {t:'photo', k:'foto_equipos', l:'Foto de los drones y equipos (opcional)', opt:1},
     {t:'text', k:'obs', l:'Novedades / observaciones', opt:1}]},
-  {id:'autorizacion', n:'4. Autorización recibida', ico:'🟢', req:'prevuelo', f:[
+  {id:'autorizacion', n:'4. Autorización y parámetros de vuelo', ico:'🟢', req:'prevuelo', f:[
     {t:'text', k:'por', l:'Autorizado por'},
     {t:'sel', k:'medio', l:'Medio', o:['Llamada', 'Mensaje', 'SMS', 'En persona']},
     {t:'time', k:'hora', l:'Hora de la autorización'},
-    {t:'text', k:'obs', l:'Indicaciones recibidas', opt:1}]},
+    {t:'sec', l:'Indicaciones recibidas – parámetros de vuelo', p:'Parámetros'},
+    {t:'num', k:'gota', l:'Tamaño de gota', u:'µm'}, {t:'num', k:'vel', l:'Velocidad de vuelo', u:'m/s'},
+    {t:'num', k:'ancho', l:'Ancho de pasada', u:'m'}, {t:'num', k:'vol', l:'Volumen de aplicación', u:'L/ha'},
+    {t:'text', k:'obs', l:'Otras indicaciones', opt:1}]},
   {id:'cierre', n:'5. Finalización de la operación', ico:'🏁', req:'autorizacion', f:[
     {t:'sec', l:'Horario de vuelo', p:'Vuelo'},
     {t:'time', k:'hora_ini', l:'Hora de inicio'}, {t:'time', k:'hora_fin', l:'Hora de finalización'},
