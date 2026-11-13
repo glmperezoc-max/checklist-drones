@@ -1,6 +1,6 @@
 // Service worker: guarda la app en el teléfono para que abra sin internet.
 // Al publicar una nueva versión, cambie el número de CACHE.
-const CACHE = 'drones-v5';
+const CACHE = 'drones-v7';
 const ARCHIVOS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './logo.png'];
 
 self.addEventListener('install', e => {

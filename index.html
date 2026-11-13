@@ -41,10 +41,12 @@ textarea{min-height:80px}
 .chip.bad input:checked+span{background:var(--r);border-color:var(--r)}
 .r{color:var(--r)}small{font-weight:400;color:#666}
 .btnfoto{display:inline-block;margin-top:6px;padding:12px 16px;border:2px dashed var(--v2);border-radius:10px;color:var(--v)}
+.mrow{display:flex;gap:8px;align-items:center;margin-top:6px}.mrow input{margin-top:0!important;min-width:0}.mrow .xdel{border:0;background:#eee;border-radius:8px;padding:12px;font-size:16px}
 .pv{display:block;max-width:100%;max-height:240px;margin-top:8px;border-radius:8px}
 .alerta{background:#fdecea;border-left:4px solid var(--r);padding:10px 12px;border-radius:6px;margin:10px 0}
 .info{background:#fff8e1;border-left:4px solid #f0ad00;padding:10px 12px;border-radius:6px;margin-bottom:12px;font-size:14px}
 .hist{font-size:13px;color:#555}
+#estado{padding:12px;border-radius:8px;background:#fff8e1;margin:10px 0;font-size:16px}#estado.ok{background:#eef6e9;color:#2f6b14;font-size:18px}
 </style>
 </head>
 <body>
@@ -70,78 +72,85 @@ const LS = {
 };
 
 /* ---------- Definición del checklist ---------- */
-const NIVEL = ['Lleno', '3/4', '1/2', '1/4', 'Reserva'];
-const EQ = [
-  ['drones', 'Drones DJI T100', 2], ['plantas', 'Plantas EI 14000', 2], ['bat_dron', 'Baterías del dron', 8],
-  ['controles', 'Controles del dron', 2], ['bat_ext', 'Baterías externas de control remoto', 4],
-  ['carg_bat', 'Cargadores de batería de control remoto', 2], ['carg_ctrl', 'Cargadores de control remoto', 2],
-  ['relay', 'Antenas relay', 2], ['rtk', 'Antena RTK con trípode', 1]
+const DRONES = ['T100', 'One Piece'];   // nombres de los drones (cada uno con sus equipos marcados)
+const NIVEL = ['Lleno', '3/4 tanque', '1/2 tanque', '1/4 tanque', 'Reserva'];
+const EQ_DRON = [   // equipos que acompañan a cada dron
+  ['bat', 'Baterías del dron', 4], ['ctrl', 'Control remoto', 1], ['bat_ext', 'Baterías externas del control', 2],
+  ['carg_bat', 'Cargador de baterías del control', 1], ['carg_ctrl', 'Cargador del control', 1],
+  ['relay', 'Antena relay', 1], ['planta', 'Planta EI 14000', 1]
 ];
-const conteo = p => [{t:'sec', l:'Conteo de equipos (deben estar completos)', p:'Conteo'},
-  ...EQ.map(([k, l, n]) => ({t:'count', k:p + k, l, exp:n}))];
-const DRON_CK = [
-  ['helices', 'Hélices (al tacto)'], ['mot_tacto', 'Motores de propulsión (al tacto)'],
-  ['mot_vuelo', 'Motores en vuelo de calentamiento'], ['valvulas', 'Válvulas solenoides en vuelo'],
-  ['centrif', 'Centrífugas (activar rociado)'], ['con_rtk', 'Conexión con antena RTK'], ['con_relay', 'Conexión antena relay']
+const conteo = p => [
+  ...DRONES.flatMap((d, i) => [{t:'sec', l:`Conteo de equipos – Dron ${d}`, p:`Dron ${d} · Conteo`},
+    ...EQ_DRON.map(([k, l, n]) => ({t:'count', k:`${p}${i}_${k}`, l, exp:n}))]),
+  {t:'sec', l:'Conteo – equipo compartido', p:'Compartido · Conteo'},
+  {t:'count', k:p + 'rtk', l:'Antena RTK con trípode', exp:1}];
+const CK = [
+  ['Revisión al tacto', 'Tacto', [['helices', 'Hélices'], ['motores', 'Motores de propulsión'], ['tornillos', 'Tornillos ajustados']]],
+  ['Revisión en elevación', 'Elevación', [['al_motores', 'Alertas de motores'], ['valvulas', 'Electroválvulas solenoides'],
+    ['al_rtk', 'Alerta conexión antena RTK'], ['al_relay', 'Alerta conexión antena relay']]],
+  ['Revisión visual', 'Visual', [['centrif', 'Centrífugas (activar opción de rociado)'], ['caudal', 'Calibración de caudal']]]
 ];
-const dron = d => [{t:'sec', l:`Checklist Dron T100 #${d}`, p:`Dron ${d}`},
-  ...DRON_CK.map(([k, l]) => ({t:'ok', k:`d${d}_${k}`, l}))];
+const checkDron = (d, i) => CK.flatMap(([titulo, corto, items]) => [
+  {t:'sec', l:`Dron ${d} – ${titulo}`, p:`Dron ${d} · ${corto}`},
+  ...items.map(([k, l]) => ({t:'ok', k:`d${i}_${k}`, l}))]);
 
 const ETAPAS = [
   {id:'mezcla', n:'1. Inicio de preparación de mezcla', ico:'🧪', f:[
     {t:'sec', l:'Control de equipos de mezcla'},
     {t:'ok', k:'motor', l:'Motor'}, {t:'ok', k:'bomba_sum', l:'Bomba sumergible'},
     {t:'ok', k:'bomba_movil', l:'Bomba sumergible móvil'}, {t:'ok', k:'taladro', l:'Taladro'},
-    {t:'photo', k:'foto', l:'Foto (opcional)', opt:1},
+    {t:'photo', k:'foto', l:'Foto de los equipos de mezcla (opcional)', opt:1},
     {t:'text', k:'obs', l:'Novedades / observaciones', opt:1}]},
   {id:'inventario', n:'2. Inventario después de la última mezcla', ico:'📦', req:'mezcla', f:[
     {t:'sec', l:'Cantidades que quedan', p:'Inventario'},
     {t:'num', k:'dithane', l:'Dithane', u:'L'}, {t:'num', k:'aceite', l:'Aceite', u:'L'},
     {t:'num', k:'acond', l:'Acondicionador', u:'kg'}, {t:'num', k:'hypotensor', l:'Hypotensor', u:'L'},
-    {t:'num', k:'photon', l:'Photon', u:'L'}, {t:'text', k:'sist_nombre', l:'Sistémico (cuál)'},
-    {t:'num', k:'sist_l', l:'Sistémico cantidad', u:'L'}, {t:'num', k:'atp', l:'ATP', u:'L'},
+    {t:'num', k:'photon', l:'Photon', u:'L'}, {t:'num', k:'atp', l:'ATP', u:'L'},
+    {t:'multi', k:'sist', l:'Sistémicos (cuál y cantidad en litros)'},
+    {t:'photo', k:'foto', l:'Foto del inventario (opcional)', opt:1},
     {t:'text', k:'obs', l:'Observaciones', opt:1}]},
   {id:'prevuelo', n:'3. Antes del vuelo + solicitar autorización', ico:'🌤️', req:'inventario', f:[
     {t:'sec', l:'Condiciones del clima', p:'Clima'},
-    {t:'num', k:'temp', l:'Temperatura', u:'°C'}, {t:'num', k:'humedad', l:'Humedad', u:'%'},
-    {t:'num', k:'viento', l:'Velocidad del viento', u:'km/h'}, {t:'num', k:'presion', l:'Presión barométrica', u:'hPa'},
-    {t:'photo', k:'foto_clima', l:'Foto del medidor de clima', cam:1},
-    ...dron(1), ...dron(2),
-    {t:'sec', l:'Nivel de batería de antenas', p:'Batería'},
-    {t:'num', k:'bat_relay1', l:'Antena relay #1', u:'%'}, {t:'num', k:'bat_relay2', l:'Antena relay #2', u:'%'},
-    {t:'num', k:'bat_rtk', l:'Antena RTK', u:'%'},
-    {t:'sec', l:'Nivel de gasolina de las plantas', p:'Gasolina'},
-    {t:'sel', k:'gas_p1', l:'Planta EI 14000 #1', o:NIVEL}, {t:'sel', k:'gas_p2', l:'Planta EI 14000 #2', o:NIVEL},
+    {t:'num', k:'temp', l:'Temperatura', u:'°C'}, {t:'photo', k:'foto_temp', l:'Foto de la temperatura', cam:1},
+    {t:'num', k:'humedad', l:'Humedad', u:'%'}, {t:'photo', k:'foto_hum', l:'Foto de la humedad', cam:1},
+    {t:'num', k:'viento', l:'Velocidad del viento', u:'km/h'}, {t:'photo', k:'foto_viento', l:'Foto de la velocidad del viento', cam:1},
+    {t:'num', k:'presion', l:'Presión barométrica', u:'hPa'}, {t:'photo', k:'foto_presion', l:'Foto de la presión barométrica', cam:1},
+    ...DRONES.flatMap((d, i) => [...checkDron(d, i),
+      {t:'sec', l:`Dron ${d} – Equipos`, p:`Dron ${d}`},
+      {t:'num', k:`bat_relay${i}`, l:'Batería antena relay', u:'%'},
+      {t:'sel', k:`gas_p${i}`, l:'Gasolina planta EI 14000', o:NIVEL}]),
+    {t:'sec', l:'Antena RTK (compartida)', p:'RTK'},
+    {t:'num', k:'bat_rtk', l:'Batería antena RTK', u:'%'},
     ...conteo('ini_'),
+    {t:'photo', k:'foto_equipos', l:'Foto de los drones y equipos (opcional)', opt:1},
     {t:'text', k:'obs', l:'Novedades / observaciones', opt:1}]},
   {id:'autorizacion', n:'4. Autorización recibida', ico:'🟢', req:'prevuelo', f:[
     {t:'text', k:'por', l:'Autorizado por'},
-    {t:'sel', k:'medio', l:'Medio', o:['WhatsApp', 'Llamada', 'SMS', 'En persona']},
+    {t:'sel', k:'medio', l:'Medio', o:['Llamada', 'Mensaje', 'SMS', 'En persona']},
     {t:'time', k:'hora', l:'Hora de la autorización'},
     {t:'text', k:'obs', l:'Indicaciones recibidas', opt:1}]},
   {id:'cierre', n:'5. Finalización de la operación', ico:'🏁', req:'autorizacion', f:[
     {t:'sec', l:'Horario de vuelo', p:'Vuelo'},
     {t:'time', k:'hora_ini', l:'Hora de inicio'}, {t:'time', k:'hora_fin', l:'Hora de finalización'},
-    {t:'sec', l:'Área aplicada', p:'Área'},
-    {t:'num', k:'area_d1', l:'Dron #1', u:'ha'}, {t:'num', k:'area_d2', l:'Dron #2', u:'ha'},
-    {t:'sec', l:'Plantas EI 14000', p:'Planta'},
-    {t:'num', k:'horas_p1', l:'Horas planta #1', u:'h'}, {t:'num', k:'horas_p2', l:'Horas planta #2', u:'h'},
-    {t:'sel', k:'gas_p1', l:'Gasolina planta #1', o:NIVEL}, {t:'sel', k:'gas_p2', l:'Gasolina planta #2', o:NIVEL},
-    {t:'sec', l:'Ciclos de baterías del dron', p:'Ciclos'},
-    ...[1,2,3,4,5,6,7,8].map(i => ({t:'num', k:'ciclos_b' + i, l:'Batería #' + i})),
-    {t:'sec', l:'Furgón'},
+    ...DRONES.flatMap((d, i) => [
+      {t:'sec', l:`Dron ${d}`, p:`Dron ${d}`},
+      {t:'num', k:`area_${i}`, l:'Área aplicada', u:'ha'},
+      {t:'num', k:`horas_p${i}`, l:'Horas planta EI 14000', u:'h'},
+      {t:'sel', k:`gas_p${i}`, l:'Gasolina planta EI 14000', o:NIVEL},
+      ...[1, 2, 3, 4].map(b => ({t:'num', k:`ciclos_${i}_${b}`, l:`Ciclos batería ${b}`}))]),
+    {t:'sec', l:'Furgón', p:'Furgón'},
     {t:'sel', k:'gas_furgon', l:'Gasolina del furgón', o:NIVEL},
-    {t:'sec', l:'Mapa de aplicación'},
-    {t:'photo', k:'foto_mapa', l:'Foto del mapa en la APP'},
+    {t:'sec', l:'Mapa de aplicación', p:'Mapa'},
+    {t:'photo', k:'foto_mapa', l:'Foto del mapa en la APP (opcional)', opt:1},
     {t:'yn', k:'mapa_ok', l:'¿Conectaron los equipos a internet y verificaron en el mapa cómo quedó la aplicación?'},
     ...conteo('fin_'),
     {t:'text', k:'obs', l:'Novedades / observaciones', opt:1}]}
 ];
 const NOVEDAD = {id:'novedad', n:'Novedad durante la operación', ico:'⚠️', f:[
-  {t:'sel', k:'tipo', l:'Tipo de novedad', o:['Clima', 'Dron', 'Planta', 'Antenas', 'Equipo de mezcla', 'Otro']},
+  {t:'sel', k:'tipo', l:'Tipo de novedad', o:['Clima', ...DRONES.map(d => 'Dron ' + d), 'Planta', 'Antenas', 'Equipo de mezcla', 'Otro']},
   {t:'text', k:'desc', l:'Descripción de la novedad'},
   {t:'sel', k:'accion', l:'Acción tomada', o:['Operación suspendida – esperando indicaciones', 'Se reanudó con autorización']},
-  {t:'photo', k:'foto', l:'Foto', opt:1}]};
+  {t:'photo', k:'foto', l:'Foto de la novedad (opcional)', opt:1}]};
 const ALL = [...ETAPAS, NOVEDAD];
 ALL.forEach(e => { let p = ''; e.f.forEach(f => {
   if (f.t === 'sec') { p = f.p || ''; return; }
@@ -163,6 +172,7 @@ const DB = {
   put: r => DB.run('readwrite', s => s.put(r)),
   all: () => DB.run('readonly', s => s.getAll()),
   count: () => DB.run('readonly', s => s.count()),
+  get: id => DB.run('readonly', s => s.get(id)),
   del: id => DB.run('readwrite', s => s.delete(id))
 };
 
@@ -294,6 +304,7 @@ function campo(f) {
     case 'count': return `<label class="fl">${esc(f.l)} <small>(deben ser ${f.exp})</small>${req}<input type="number" inputmode="numeric" step="1" min="0" name="${f.k}"></label>`;
     case 'time': return `<label class="fl">${esc(f.l)}${req}<input type="time" name="${f.k}" value="${hhmm}"></label>`;
     case 'photo': return `<div class="fl">${esc(f.l)}${req}<br><label class="btnfoto">📷 Tomar foto<input type="file" accept="image/*" ${f.cam ? 'capture="environment"' : ''} data-k="${f.k}" hidden></label><img id="pv_${f.k}" class="pv" hidden alt=""></div>`;
+    case 'multi': return `<div class="fl">${esc(f.l)}${req}<div id="m_${f.k}"></div><button type="button" class="btn sec" style="padding:10px;font-size:15px;margin-top:8px" data-add="${f.k}">➕ Agregar otro</button></div>`;
     case 'text': return /^(obs|desc)/.test(f.k)
       ? `<label class="fl">${esc(f.l)}${req}<textarea name="${f.k}"></textarea></label>`
       : `<label class="fl">${esc(f.l)}${req}<input type="text" name="${f.k}"></label>`;
@@ -316,7 +327,15 @@ function abrir(id) {
     try { FOT[inp.dataset.k] = await comprimir(file); pv.src = FOT[inp.dataset.k]; pv.hidden = false; }
     catch { alert('No se pudo procesar la foto. Intente de nuevo.'); }
   });
+  app.querySelectorAll('[data-add]').forEach(b => { const k = b.dataset.add; filaMulti(k); b.onclick = () => filaMulti(k); });
   $('#frm').onsubmit = ev => { ev.preventDefault(); guardar(e, op, ev.target); };
+}
+function filaMulti(k) {
+  const c = $('#m_' + k), div = document.createElement('div');
+  div.className = 'mrow';
+  div.innerHTML = `<input type="text" placeholder="Cuál" data-c="n" style="flex:2"><input type="number" inputmode="decimal" step="any" placeholder="Litros" data-c="l" style="flex:1"><button type="button" class="xdel">✕</button>`;
+  div.querySelector('.xdel').onclick = () => { if (c.children.length > 1) div.remove(); else div.querySelectorAll('input').forEach(i => i.value = ''); };
+  c.appendChild(div);
 }
 
 function leer(e, frm) {
@@ -324,6 +343,14 @@ function leer(e, frm) {
   for (const f of e.f) {
     if (f.t === 'sec') continue;
     let v;
+    if (f.t === 'multi') {
+      const filas = [...frm.querySelectorAll(`#m_${f.k} .mrow`)].map(r => [r.querySelector('[data-c=n]').value.trim(), r.querySelector('[data-c=l]').value.trim()]).filter(x => x[0] || x[1]);
+      if (!filas.length && !f.opt) { faltan.push(f.l + ' (agregue al menos uno)'); continue; }
+      if (filas.some(x => !x[0] || !x[1])) { faltan.push(f.l + ': complete cuál y cantidad'); continue; }
+      filas.forEach((x, i) => { campos.push({l:`Inventario – Sistémico ${i + 1} (cuál)`, v:x[0]}); campos.push({l:`Inventario – Sistémico ${i + 1} (L)`, v:x[1]}); });
+      vals[f.k] = filas.map(x => `${x[0]}: ${x[1]} L`).join('; ');
+      continue;
+    }
     if (['ok', 'yn', 'sel'].includes(f.t)) v = frm.querySelector(`input[name="${f.k}"]:checked`)?.value || '';
     else if (f.t === 'photo') v = FOT[f.k] ? '📷' : '';
     else v = (frm.elements[f.k]?.value || '').trim();
@@ -349,7 +376,7 @@ async function guardar(e, op, frm) {
   }
   const btn = $('#bguardar'); btn.disabled = true; btn.textContent = 'Guardando…';
   if (e.id === 'cierre') {
-    const t = Math.round(((+vals.area_d1 || 0) + (+vals.area_d2 || 0)) * 100) / 100;
+    const t = Math.round(DRONES.reduce((s, d, i) => s + (+vals['area_' + i] || 0), 0) * 100) / 100;
     vals.area_total = String(t); campos.push({l:'Área total (ha)', v:String(t)});
   }
   const d = new Date(), fotos = {};
@@ -366,13 +393,22 @@ async function guardar(e, op, frm) {
   LS.set('op', e.id === 'cierre' ? null : op);
   guardado(r, e);
   sync();
+  vigilar(r.id);
+}
+function vigilar(id) {   // muestra "enviado con éxito" cuando el registro sale del teléfono
+  const t = setInterval(async () => {
+    const el = $('#estado'); if (!el || el.dataset.id !== id) return clearInterval(t);
+    let pend = true; try { pend = !!(await DB.get(id)); } catch {}
+    if (!pend) { el.className = 'ok'; el.innerHTML = '✅ <b>Formulario enviado con éxito</b>'; clearInterval(t); }
+    else el.innerHTML = navigator.onLine ? '⏳ Enviando…' : '📴 Sin señal: quedó guardado en el teléfono y se enviará automáticamente cuando haya internet.';
+  }, 1500);
 }
 
 function guardado(r, e) {
   const pedir = e.id === 'prevuelo';
-  app.innerHTML = `<div class="card"><h2>✅ Guardado en el teléfono</h2><p class="hist">${esc(e.n)}<br>${r.fechaLocal}</p>
+  app.innerHTML = `<div class="card"><h2>💾 Formulario guardado</h2><p class="hist">${esc(e.n)}<br>${r.fechaLocal}</p>
+    <div id="estado" data-id="${r.id}">⏳ Enviando…</div>
     ${r.alertas.length ? `<div class="alerta">⚠️ ${r.alertas.map(esc).join('<br>')}</div>` : ''}
-    <p>Se envía automáticamente al sistema y por correo cuando haya señal.</p>
     ${pedir ? '<div class="info" style="margin-top:12px">📞 <b>Solicite la autorización</b> por llamada o mensaje.<br>⛔ <b>No inicie el vuelo</b> hasta recibirla. Cuando la reciba, registre la etapa 4.</div>' : ''}
     ${e.id === 'novedad' && r.vals.accion?.startsWith('Operación suspendida') ? '<div class="info" style="margin-top:12px">🛑 Operación suspendida. Espere indicaciones antes de continuar.</div>' : ''}
     <button class="btn sec" id="ok">Volver al inicio</button></div>`;
