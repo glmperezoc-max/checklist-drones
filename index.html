@@ -59,6 +59,8 @@ table.t{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}table.
 .sem{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:middle;margin-right:4px}.sem.verde{background:var(--v)}.sem.amarillo{background:var(--y)}.sem.rojo{background:var(--r)}
 .ths{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.ths figure{margin:0;width:calc(50% - 3px)}.ths img{width:100%;border-radius:8px;background:#eee;min-height:90px;display:block}.ths figcaption{font-size:11px;color:#666}
 .malo{color:var(--r);font-weight:700}
+.falta{color:var(--r)!important}.falta input,.falta textarea{border:2px solid var(--r)!important;background:#fff5f5!important}
+.falta .chip span{border-color:var(--r)}.falta .btnfoto{border-color:var(--r);color:var(--r)}.fl.falta::before{content:'⚠️ Falta · ';font-size:13px}
 </style>
 </head>
 <body>
@@ -85,6 +87,17 @@ const LS = {
   get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
   set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
 };
+
+/* Cada usuario tiene su propia operación en curso e historial en el teléfono */
+const yo = () => LS.get('user', null) || {};
+function getOp() {
+  const u = yo(); if (!u.u) return null;
+  let op = LS.get('op:' + u.u, null);
+  const vieja = LS.get('op', null);   // versión anterior: una sola operación para todos
+  if (!op && vieja && vieja.resp === u.nombre) { op = vieja; LS.set('op:' + u.u, op); localStorage.removeItem('op'); }
+  return op;
+}
+function setOp(op) { const u = yo(); if (!u.u) return; if (op) LS.set('op:' + u.u, op); else localStorage.removeItem('op:' + u.u); }
 
 /* ---------- Definición del checklist ---------- */
 const DRONES = ['T100', 'One Piece'];   // nombres de los drones (cada uno con sus equipos marcados)
@@ -171,7 +184,7 @@ const ETAPAS = [
     {t:'text', k:'obs', l:'Observaciones', opt:1}]},
   {id:'cierre', n:'5. Finalización de la operación', ico:'🏁', req:['autorizacion', 'inventario'], f:[
     {t:'sec', l:'Horario de vuelo', p:'Vuelo'},
-    {t:'time', k:'hora_ini', l:'Hora de inicio'}, {t:'time', k:'hora_fin', l:'Hora de finalización'},
+    {t:'time', k:'hora_ini', l:'Hora de inicio', vacio:1}, {t:'time', k:'hora_fin', l:'Hora de finalización', vacio:1},
     ...DRONES.flatMap((d, i) => [
       {t:'sec', l:`Dron ${d}`, p:`Dron ${d}`},
       {t:'num', k:`area_${i}`, l:'Área aplicada', u:'ha'},
@@ -265,9 +278,9 @@ function avisos() {
     ? 'en Safari toque <b>Compartir ⬆️</b> → <b>Agregar a pantalla de inicio</b>. Use siempre el ícono, no Safari.'
     : 'en Chrome toque <b>⋮</b> → <b>Instalar app</b> o <b>Agregar a pantalla principal</b>.'}</div>`;
 }
-function hist(txt, d) { LS.set('hist', [{txt, d:d.toISOString()}, ...LS.get('hist', [])].slice(0, 15)); }
+function hist(txt, d) { const k = 'hist:' + yo().u; LS.set(k, [{txt, d:d.toISOString()}, ...LS.get(k, [])].slice(0, 15)); }
 function histHTML() {
-  const h = LS.get('hist', []);
+  const h = LS.get('hist:' + yo().u, []);
   return h.length ? `<div class="card"><h2>Últimos registros</h2><div class="hist">${h.map(x => `• ${esc(x.txt)} — ${fmt(x.d)}`).join('<br>')}</div></div>` : '';
 }
 
@@ -295,9 +308,9 @@ function login() {
 }
 
 async function salir() {
-  const n = await DB.count().catch(() => 0), op = LS.get('op', null);
+  const n = await DB.count().catch(() => 0), op = getOp();
   let msg = '¿Cerrar sesión?';
-  if (op) msg = 'Hay una operación en curso (' + op.finca + '). Queda guardada en este teléfono y puede continuarla al ingresar de nuevo.\n\n' + msg;
+  if (op) msg = 'Tiene una operación en curso (' + op.finca + '). Queda guardada solo para usted: la verá cuando vuelva a ingresar con su usuario.\n\n' + msg;
   if (n) msg = 'Hay ' + n + ' registro(s) sin enviar. Se enviarán cuando vuelva a ingresar con internet.\n\n' + msg;
   if (!confirm(msg)) return;
   LS.set('user', null); home();
@@ -308,7 +321,7 @@ function home() {
   const user = LS.get('user', null);
   $('#salirTop').hidden = !user; $('#salirTop').onclick = salir;
   if (!user) return login();
-  const op = LS.get('op', null);
+  const op = getOp();
   let h = avisos();
   if (user.rol === 'admin') h += `<button class="btn azul" id="bpanel" style="margin:0 0 12px">📊 Panel de administración</button>`;
   if (!op) {
@@ -324,7 +337,7 @@ function home() {
       if (!f) return;
       LS.set('fincas', [f, ...fincas.filter(x => x !== f)].slice(0, 15));
       const d = new Date();
-      LS.set('op', {id:'OP-' + stamp(d) + '-' + Math.random().toString(36).slice(2, 5).toUpperCase(), finca:f, resp:user.nombre, ini:d.toISOString(), done:{}, reg:{}, nov:0});
+      setOp({id:'OP-' + stamp(d) + '-' + Math.random().toString(36).slice(2, 5).toUpperCase(), finca:f, resp:user.nombre, ini:d.toISOString(), done:{}, reg:{}, nov:0});
       home();
     };
   } else {
@@ -343,7 +356,7 @@ function home() {
     app.innerHTML = h;
     app.querySelectorAll('[data-e]').forEach(b => b.onclick = () => abrir(b.dataset.e, op.done[b.dataset.e] && b.dataset.e !== 'novedad'));
     $('#anular').onclick = () => {
-      if (confirm('¿Anular la operación? Lo que ya se guardó se conserva y se envía.')) { LS.set('op', null); home(); }
+      if (confirm('¿Anular la operación? Lo que ya se guardó se conserva y se envía.')) { setOp(null); home(); }
     };
   }
   if ($('#bpanel')) $('#bpanel').onclick = () => panel('ops');
@@ -351,7 +364,7 @@ function home() {
 }
 
 function chips(f, opts, req) {
-  return `<div class="fl">${esc(f.l)}${req}<div class="chips">${opts.map(o =>
+  return `<div class="fl" data-f="${f.k}">${esc(f.l)}${req}<div class="chips">${opts.map(o =>
     `<label class="chip ${['Falla', 'No', 'Alto', 'No se revisó', 'Bajo – se niveló'].includes(o) ? 'bad' : ''}"><input type="radio" name="${f.k}" value="${esc(o)}"><span>${esc(o)}</span></label>`).join('')}</div></div>`;
 }
 function campo(f, corr) {
@@ -362,16 +375,16 @@ function campo(f, corr) {
     case 'ok': return chips(f, ['OK', 'Falla'], req);
     case 'yn': return chips(f, ['Sí', 'No'], req);
     case 'sel': return chips(f, f.o, req);
-    case 'num': return `<label class="fl">${esc(f.l)}${f.u ? ` <small>(${f.u})</small>` : ''}${req}<input type="number" inputmode="decimal" step="any" name="${f.k}"></label>`;
-    case 'count': return `<label class="fl">${esc(f.l)} <small>(deben ser ${f.exp})</small>${req}<input type="number" inputmode="numeric" step="1" min="0" name="${f.k}"></label>`;
-    case 'time': return `<label class="fl">${esc(f.l)}${req}<input type="time" name="${f.k}" value="${hm}"></label>`;
-    case 'photo': return corr ? `<div class="fl">${esc(f.l)}<br><small>📷 ${f.fija ? 'Foto registrada como evidencia (no se puede cambiar)' : 'Las fotos ya registradas se conservan'}</small></div>`
-      : `<div class="fl">${esc(f.l)}${req}<br><label class="btnfoto">📷 Tomar foto<input type="file" accept="image/*" ${f.cam ? 'capture="environment"' : ''} data-k="${f.k}" hidden></label><img id="pv_${f.k}" class="pv" hidden alt=""></div>`;
-    case 'multi': return `<div class="fl">${esc(f.l)}${req}<div id="m_${f.k}"></div><button type="button" class="btn sec chico" style="margin-top:8px" data-add="${f.k}">➕ Agregar otro</button></div>`;
+    case 'num': return `<label class="fl" data-f="${f.k}">${esc(f.l)}${f.u ? ` <small>(${f.u})</small>` : ''}${req}<input type="number" inputmode="decimal" step="any" name="${f.k}"></label>`;
+    case 'count': return `<label class="fl" data-f="${f.k}">${esc(f.l)} <small>(deben ser ${f.exp})</small>${req}<input type="number" inputmode="numeric" step="1" min="0" name="${f.k}"></label>`;
+    case 'time': return `<label class="fl" data-f="${f.k}">${esc(f.l)}${req}<input type="time" name="${f.k}" value="${f.vacio ? '' : hm}"></label>`;
+    case 'photo': return corr ? `<div class="fl" data-f="${f.k}">${esc(f.l)}<br><small>📷 ${f.fija ? 'Foto registrada como evidencia (no se puede cambiar)' : 'Las fotos ya registradas se conservan'}</small></div>`
+      : `<div class="fl" data-f="${f.k}">${esc(f.l)}${req}<br><label class="btnfoto">📷 Tomar foto<input type="file" accept="image/*" ${f.cam ? 'capture="environment"' : ''} data-k="${f.k}" hidden></label><img id="pv_${f.k}" class="pv" hidden alt=""></div>`;
+    case 'multi': return `<div class="fl" data-f="${f.k}">${esc(f.l)}${req}<div id="m_${f.k}"></div><button type="button" class="btn sec chico" style="margin-top:8px" data-add="${f.k}">➕ Agregar otro</button></div>`;
     case 'mant': return `<div class="mantbox"><h3 style="margin-top:10px">🔧 Mantenimiento – Dron ${esc(DRONES[f.i])}</h3><div id="mant_${f.i}"></div></div>`;
     case 'text': return /^(obs|desc)/.test(f.k)
-      ? `<label class="fl">${esc(f.l)}${req}<textarea name="${f.k}"></textarea></label>`
-      : `<label class="fl">${esc(f.l)}${req}<input type="text" name="${f.k}"></label>`;
+      ? `<label class="fl" data-f="${f.k}">${esc(f.l)}${req}<textarea name="${f.k}"></textarea></label>`
+      : `<label class="fl" data-f="${f.k}">${esc(f.l)}${req}<input type="text" name="${f.k}"></label>`;
   }
   return '';
 }
@@ -399,7 +412,7 @@ function fillForm(c, s) {
 }
 
 function abrir(id, corregir) {
-  const e = ALL.find(x => x.id === id), op = LS.get('op', null);
+  const e = ALL.find(x => x.id === id), op = getOp();
   if (!op || !e) return home();
   const corr = corregir ? (op.reg || {})[id] : null;
   if (corregir && !corr) return;
@@ -428,6 +441,8 @@ function abrir(id, corregir) {
     const inp = frm.querySelector(`input[name="horas_p${f.i}"]`);
     renderMant(f.i, corr?.snap); inp.addEventListener('input', () => renderMant(f.i));
   });
+  const limpiar = ev => ev.target.closest?.('.falta')?.classList.remove('falta');   // se quita el rojo al llenarlo
+  frm.addEventListener('input', limpiar); frm.addEventListener('change', limpiar);
   frm.onsubmit = ev => { ev.preventDefault(); guardar(e, op, ev.target, corr); };
 }
 function filaMulti(k, val) {
@@ -451,7 +466,7 @@ function renderMant(i, snap) {
   const key = due.map(x => x.m.k).join();
   if (box.dataset.key === key && !snap) return;   // no redibujar si no cambió lo que toca
   box.dataset.key = key;
-  box.innerHTML = (due.length ? due.map(({m, e}) => `<div class="fl mantq ${e.sem}">${e.sem === 'rojo' ? '🔴' : '🟡'} ${esc(m.l)}
+  box.innerHTML = (due.length ? due.map(({m, e}) => `<div class="fl mantq ${e.sem}" data-f="mant_${i}_${m.k}">${e.sem === 'rojo' ? '🔴' : '🟡'} ${esc(m.l)}
       ${m.det ? `<br><small>${esc(m.det)}</small>` : ''}<br><small>${e.faltan <= 0 ? `VENCIDO (tocaba a las ${e.prox} h)` : `Toca a las ${e.prox} h · faltan ${e.faltan} h`}</small>
       <div style="margin-top:6px">¿Se realizó hoy? <b class="r">*</b></div><div class="chips">${['Sí', 'No'].map(o =>
         `<label class="chip ${o === 'No' ? 'bad' : ''}"><input type="radio" name="mant_${i}_${m.k}" value="${o}"><span>${o}</span></label>`).join('')}</div></div>`).join('')
@@ -466,11 +481,11 @@ function leer(e, frm, corr) {
   const campos = [], vals = {}, alertas = [], faltan = [], mant = [];
   for (const f of e.f) {
     if (f.t === 'sec') continue;
-    if (f.t === 'photo') { vals[f.k] = FOT[f.k] ? '📷' : ''; if (!corr && !f.opt && !FOT[f.k]) faltan.push(f.L); continue; }
+    if (f.t === 'photo') { vals[f.k] = FOT[f.k] ? '📷' : ''; if (!corr && !f.opt && !FOT[f.k]) faltan.push({l:f.L, k:f.k}); continue; }
     if (f.t === 'multi') {
       const filas = [...frm.querySelectorAll(`#m_${f.k} .mrow`)].map(r => [r.querySelector('[data-c=n]').value.trim(), r.querySelector('[data-c=l]').value.trim()]).filter(x => x[0] || x[1]);
-      if (!filas.length && !f.opt) { faltan.push(f.l + ' (agregue al menos uno)'); continue; }
-      if (filas.some(x => !x[0] || !x[1])) { faltan.push(f.l + ': complete cuál y cantidad'); continue; }
+      if (!filas.length && !f.opt) { faltan.push({l:f.l + ' (agregue al menos uno)', k:f.k}); continue; }
+      if (filas.some(x => !x[0] || !x[1])) { faltan.push({l:f.l + ': complete cuál y cantidad', k:f.k}); continue; }
       filas.forEach((x, i) => { campos.push({l:`Inventario – Sistémico ${i + 1} (cuál)`, v:x[0]}); campos.push({l:`Inventario – Sistémico ${i + 1} (L)`, v:x[1]}); });
       continue;
     }
@@ -482,7 +497,7 @@ function leer(e, frm, corr) {
         const due = frm.querySelector(`input[name="mant_${i}_${m.k}"]`);
         const x = frm.querySelector(`input[name="mantx_${i}_${m.k}"]`);
         let v = '';
-        if (due) { v = frm.querySelector(`input[name="mant_${i}_${m.k}"]:checked`)?.value || ''; if (!v) { faltan.push(`Dron ${d} – ${m.l}: ¿se realizó hoy?`); return; } }
+        if (due) { v = frm.querySelector(`input[name="mant_${i}_${m.k}"]:checked`)?.value || ''; if (!v) { faltan.push({l:`Dron ${d} – ${m.l}: ¿se realizó hoy?`, k:`mant_${i}_${m.k}`}); return; } }
         else if (x && x.checked) v = 'Sí';
         if (!v) return;
         campos.push({l:`Dron ${d} – Mantenimiento – ${m.l}`, v});
@@ -497,7 +512,7 @@ function leer(e, frm, corr) {
     if (['ok', 'yn', 'sel'].includes(f.t)) v = frm.querySelector(`input[name="${f.k}"]:checked`)?.value || '';
     else v = (frm.elements[f.k]?.value || '').trim();
     vals[f.k] = v;
-    if (!v && !f.opt) { faltan.push(f.L); continue; }
+    if (!v && !f.opt) { faltan.push({l:f.L, k:f.k}); continue; }
     if (v === 'Falla') alertas.push(`${f.L}: FALLA`);
     if (f.t === 'count' && v !== '' && +v !== f.exp) alertas.push(`${f.L}: hay ${v} de ${f.exp}`);
     if (f.k === 'mapa_ok' && v === 'No') alertas.push('Mapa de aplicación NO verificado');
@@ -506,15 +521,20 @@ function leer(e, frm, corr) {
     campos.push({l:f.L, v});
   }
   const obs = e.f.find(f => f.k === 'obs');
-  if (obs && alertas.length && !vals.obs) faltan.push('Observaciones (obligatorio cuando hay fallas, faltantes o alertas)');
+  if (obs && alertas.length && !vals.obs) faltan.push({l:'Observaciones (obligatorio cuando hay fallas, faltantes o alertas)', k:'obs'});
+  if (vals.hora_ini && vals.hora_fin && vals.hora_fin <= vals.hora_ini)
+    faltan.push({l:'La hora de finalización debe ser posterior a la hora de inicio', k:'hora_fin'}, {l:'', k:'hora_ini'});
   return {campos, vals, alertas, faltan, mant};
 }
 
 async function guardar(e, op, frm, corr) {
   const {campos, vals, alertas, faltan, mant} = leer(e, frm, corr);
-  if (faltan.length) {
-    $('#err').innerHTML = `<div class="alerta"><b>Faltan datos obligatorios:</b><br>${faltan.map(esc).join('<br>')}</div>`;
-    $('#err').scrollIntoView({behavior:'smooth', block:'center'});
+  frm.querySelectorAll('.falta').forEach(x => x.classList.remove('falta'));
+  if (faltan.length) {   // marca en rojo cada campo que falta y baja hasta el primero
+    $('#err').innerHTML = `<div class="alerta"><b>Revise los campos marcados en rojo (${faltan.filter(x => x.l).length}):</b><br>${faltan.filter(x => x.l).map(x => esc(x.l)).join('<br>')}</div>`;
+    let primero = null;
+    faltan.forEach(x => { const el = frm.querySelector(`[data-f="${x.k}"]`); if (el) { el.classList.add('falta'); primero = primero || el; } });
+    (primero || $('#err')).scrollIntoView({behavior:'smooth', block:'center'});
     return;
   }
   const btn = $('#bguardar'); btn.disabled = true; btn.textContent = 'Guardando…';
@@ -526,7 +546,7 @@ async function guardar(e, op, frm, corr) {
   e.f.filter(f => f.t === 'photo' && FOT[f.k]).forEach(f => fotos[f.l] = FOT[f.k]);
   const snap = snapForm(frm);
   let r = {id:corr ? corr.id : uid(), op:op.id, finca:op.finca, resp:op.resp, etapa:e.id, etapaNombre:e.n,
-    fecha:corr ? corr.fecha : d.toISOString(), fechaLocal:fmt(d), gps:GPS, campos, alertas, fotos, vals, mant};
+    fecha:corr ? corr.fecha : d.toISOString(), fechaLocal:fmt(d), gps:GPS, campos, alertas, fotos, vals, mant, u:yo().u, c:yo().c};
   if (corr) {
     let pend = null; try { pend = await DB.get(corr.id); } catch {}
     if (pend) { r.fotos = pend.fotos; r.gps = pend.gps || r.gps; }   // aún no salía: se reemplaza en la cola
@@ -541,7 +561,7 @@ async function guardar(e, op, frm, corr) {
   if (e.id === 'novedad') op.nov = (op.nov || 0) + 1;
   else { if (!corr) op.done[e.id] = d.toISOString(); op.reg[e.id] = {id:r.id, fecha:r.fecha, snap}; }
   hist(`${corr ? '✏️ ' : ''}${e.n} · ${op.finca}`, d);
-  LS.set('op', e.id === 'cierre' ? null : op);
+  setOp(e.id === 'cierre' ? null : op);
   guardado(r, e, corr);
   sync();
   vigilar(r.id);
@@ -684,9 +704,11 @@ async function sync(manual) {
   try {
     const pend = (await DB.all()).sort((a, b) => a.fecha < b.fecha ? -1 : 1);
     for (const r of pend) {
-      const {vals, fechaLocal, ...envio} = r;
-      const j = await api(envio);
+      const {vals, fechaLocal, u, c, ...envio} = r;
+      const dueno = u ? {u, c} : user;   // cada registro se envía con el usuario que lo llenó
+      const j = await api(envio, dueno);
       if (j.error === 'auth') {
+        if (dueno.u !== user.u) continue;   // es de otro usuario: queda pendiente hasta que él ingrese
         LS.set('user', null);
         alert('Su usuario o contraseña cambió. Ingrese de nuevo; los registros pendientes se conservan.');
         break;
