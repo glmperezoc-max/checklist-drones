@@ -1,6 +1,6 @@
 // Service worker: guarda la app en el teléfono para que abra sin internet.
 // Con internet trae siempre la versión nueva (red primero); sin internet usa la guardada.
-const CACHE = 'drones-v10';
+const CACHE = 'drones-v11';
 const ARCHIVOS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './logo.png'];
 
 self.addEventListener('install', e => {

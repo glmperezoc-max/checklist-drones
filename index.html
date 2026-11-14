@@ -13,25 +13,25 @@
 <link rel="icon" href="icon-192.png">
 <title>Checklist Drones</title>
 <style>
-:root{--a:#449cbd;--n:#0d252b;--v:#52952e;--v2:#52952e;--r:#b00020;--g:#f2f5f6;--t:#0d252b}
+:root{--a:#449cbd;--n:#0d252b;--v:#52952e;--v2:#52952e;--r:#b00020;--y:#e0a800;--g:#f2f5f6;--t:#0d252b}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;font:16px/1.4 -apple-system,system-ui,Roboto,sans-serif;background:var(--g);color:var(--t);padding-bottom:calc(env(safe-area-inset-bottom) + 20px)}
 header{position:sticky;top:0;z-index:5;background:var(--a);color:#fff;padding:calc(env(safe-area-inset-top) + 10px) 14px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
-header h1{font-size:17px;margin:0}
-#badge{font-size:13px;background:rgba(255,255,255,.18);padding:5px 10px;border-radius:14px;white-space:nowrap;border:0;color:#fff}
+header h1{font-size:13px;font-weight:500;opacity:.9;margin:0}
+.hb{font-size:13px;background:rgba(255,255,255,.18);padding:5px 10px;border-radius:14px;white-space:nowrap;border:0;color:#fff}
 main{padding:12px;max-width:640px;margin:auto}
 .card{background:#fff;border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 h2{font-size:19px;margin:0 0 6px}
 h3{font-size:14px;margin:22px 0 4px;color:var(--n);text-transform:uppercase;letter-spacing:.3px;border-bottom:2px solid var(--a);padding-bottom:4px}
 .btn{display:block;width:100%;padding:15px;border:0;border-radius:10px;font-size:17px;font-weight:600;background:var(--v);color:#fff;text-align:center;text-decoration:none;margin-top:10px}
 .btn:disabled{opacity:.6}
-.btn.sec{background:#e3e7e5;color:var(--t)}.btn.rojo{background:var(--r)}
+.btn.sec{background:#e3e7e5;color:var(--t)}.btn.rojo{background:var(--r)}.btn.azul{background:var(--a)}.btn.chico{padding:10px;font-size:15px}
 .etapa{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border:2px solid #dfe3e1;border-radius:10px;background:#fff;font-size:16px;font-weight:600;margin-bottom:8px;text-align:left;color:var(--t)}
 .etapa.ok{border-color:var(--v2);background:#eef6e9}
-.etapa:disabled:not(.ok){opacity:.45}
+.etapa:disabled{opacity:.45}
 .etapa .i{font-size:26px}.etapa small{display:block;font-weight:400;color:#666}
 .fl{display:block;margin:14px 0 0;font-weight:600}
-input[type=number],input[type=text],input[type=password],input[type=time],textarea{display:block;width:100%;margin-top:6px;padding:12px;font-size:17px;border:1.5px solid #c9cfcc;border-radius:8px;background:#fff;font-family:inherit;color:var(--t)}
+input[type=number],input[type=text],input[type=password],input[type=time],input[type=date],textarea{display:block;width:100%;margin-top:6px;padding:12px;font-size:17px;border:1.5px solid #c9cfcc;border-radius:8px;background:#fff;font-family:inherit;color:var(--t)}
 textarea{min-height:80px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
 .chip{position:relative;font-weight:600}
@@ -47,15 +47,28 @@ textarea{min-height:80px}
 .info{background:#fff8e1;border-left:4px solid #f0ad00;padding:10px 12px;border-radius:6px;margin-bottom:12px;font-size:14px}
 .hist{font-size:13px;color:#555}
 #estado{padding:12px;border-radius:8px;background:#fff8e1;margin:10px 0;font-size:16px}#estado.ok{background:#eef6e9;color:#2f6b14;font-size:18px}
+.mantbox{background:#f6f9fa;border-radius:10px;padding:4px 10px 10px;margin-top:10px}
+.mantq{border-left:4px solid var(--y);padding-left:10px}.mantq.rojo{border-color:var(--r)}
+.ck{display:flex;gap:8px;align-items:center;font-weight:500;margin:8px 0}.ck input{width:22px;height:22px}
+details summary{cursor:pointer;color:var(--a)}
+.tabs{display:flex;gap:6px;margin:8px 0}.tabs button{flex:1;padding:10px;border:0;border-radius:8px;background:#e3e7e5;font-weight:600;font-size:14px}.tabs .on{background:var(--a);color:#fff}
+.frow{display:flex;gap:8px}.frow label{flex:1;font-size:13px;font-weight:600}
+.opc{border:1.5px solid #dfe3e1;border-radius:10px;padding:10px;margin-top:8px;background:#fff;width:100%;text-align:left;font-size:15px;color:var(--t)}
+.et{display:inline-block;font-size:12px;padding:2px 6px;border-radius:6px;background:#eee;margin:3px 3px 0 0}.et.ok{background:#eef6e9;color:#2f6b14}.et.no{background:#fdecea;color:var(--r)}
+table.t{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}table.t td,table.t th{padding:6px;border-bottom:1px solid #eee;text-align:left;vertical-align:top}table.t th{background:#f2f5f6;font-size:12px}
+.sem{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:middle;margin-right:4px}.sem.verde{background:var(--v)}.sem.amarillo{background:var(--y)}.sem.rojo{background:var(--r)}
+.ths{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.ths figure{margin:0;width:calc(50% - 3px)}.ths img{width:100%;border-radius:8px;background:#eee;min-height:90px;display:block}.ths figcaption{font-size:11px;color:#666}
+.malo{color:var(--r);font-weight:700}
 </style>
 </head>
 <body>
-<header><div style="display:flex;flex-direction:column;gap:2px"><img src="logo.png" alt="La Hacienda" style="height:20px;width:auto;align-self:flex-start"><h1 style="font-size:13px;font-weight:500;opacity:.9">Checklist operación drones</h1></div><div style="display:flex;gap:6px;align-items:center"><button id="badge">…</button><button id="salirTop" hidden style="font-size:13px;background:rgba(0,0,0,.18);padding:5px 10px;border-radius:14px;border:0;color:#fff">⏻ Salir</button></div></header>
+<header><div style="display:flex;flex-direction:column;gap:2px"><img src="logo.png" alt="La Hacienda" style="height:20px;width:auto;align-self:flex-start"><h1>Checklist operación drones</h1></div>
+<div style="display:flex;gap:6px;align-items:center"><button id="badge" class="hb">…</button><button id="salirTop" class="hb" hidden style="background:rgba(0,0,0,.18)">⏻ Salir</button></div></header>
 <main id="app"></main>
 <script>
 /* ================= CONFIGURACIÓN ================= */
 const CONFIG = {
-  API_URL: 'https://script.google.com/macros/s/AKfycbw4iHYEW8FeGOSVenP8edbyvfLag3eH5YdgM9eJSvH3IfNbTy6kov_jlK50Gi7NT88/exec', // URL de la implementación web de Apps Script (termina en /exec)
+  API_URL: 'https://script.google.com/macros/s/AKfycbw4iHYEW8FeGOSVenP8edbyvfLag3eH5YdgM9eJSvH3IfNbTy6kov_jlK50Gi7NT88/exec',
 };
 /* ================================================= */
 
@@ -65,7 +78,9 @@ const pad = n => String(n).padStart(2, '0');
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const fmt = d => new Date(d).toLocaleString('es-CO', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const hhmm = d => new Date(d).toLocaleTimeString('es-CO', {hour:'2-digit',minute:'2-digit'});
 const stamp = d => `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}`;
+const isoDia = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const LS = {
   get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
   set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
@@ -74,7 +89,8 @@ const LS = {
 /* ---------- Definición del checklist ---------- */
 const DRONES = ['T100', 'One Piece'];   // nombres de los drones (cada uno con sus equipos marcados)
 const NIVEL = ['Lleno', '3/4 tanque', '1/2 tanque', '1/4 tanque', 'Reserva'];
-const EQ_DRON = [   // equipos que acompañan a cada dron
+const ACEITE = ['Óptimo', 'Bajo – se niveló', 'Alto', 'No se revisó'];
+const EQ_DRON = [
   ['bat', 'Baterías del dron', 4], ['ctrl', 'Control remoto', 1], ['bat_ext', 'Baterías externas del control', 2],
   ['carg_bat', 'Cargador de baterías del control', 1], ['carg_ctrl', 'Cargador del control', 1],
   ['relay', 'Antena relay', 1], ['planta', 'Planta EI 14000', 1]
@@ -94,37 +110,50 @@ const checkDron = (d, i) => CK.flatMap(([titulo, corto, items]) => [
   {t:'sec', l:`Dron ${d} – ${titulo}`, p:`Dron ${d} · ${corto}`},
   ...items.map(([k, l]) => ({t:'ok', k:`d${i}_${k}`, l}))]);
 
+// Mantenimiento de plantas EI 14000 (horas acumuladas del horómetro). Igual que en Reportes.gs
+const MANT = [
+  {k:'aceite', l:'Cambio de aceite', int:50, primero:20},
+  {k:'esp_limp', l:'Limpieza filtro de aire (esponja)', int:10, reset:'esp_camb'},
+  {k:'esp_camb', l:'Cambio filtro de aire (esponja)', int:100},
+  {k:'pap_limp', l:'Limpieza filtro de aire (papel)', int:10, reset:'pap_camb'},
+  {k:'pap_camb', l:'Cambio filtro de aire (papel)', int:100},
+  {k:'rev300', l:'Revisión 300 h', int:300, det:'Arrestador de chispas, bujía F6RTC, holgura de válvulas, filtro de boquilla del inyector y bomba de combustible, tubería de combustible'}
+];
+function proxMant(m, H, ult) {   // ult: {clave: horómetro del último hecho}
+  let last = ult[m.k] ?? null;
+  if (m.reset && ult[m.reset] != null && (last == null || ult[m.reset] > last)) last = ult[m.reset];
+  let base, prox;
+  if (last != null) { base = last; prox = last + m.int; }
+  else if (m.primero) {   // calendario desde cero: aceite a las 20, 70, 120…
+    if (H < m.primero) { base = 0; prox = m.primero; }
+    else { base = m.primero + Math.floor((H - m.primero) / m.int) * m.int; prox = base + m.int; }
+  } else { base = Math.floor(H / m.int) * m.int; prox = base + m.int; }
+  const pct = (H - base) / (prox - base);
+  return {base, prox, faltan: Math.round((prox - H) * 10) / 10, pct, sem: pct >= 0.9 ? 'rojo' : pct >= 0.7 ? 'amarillo' : 'verde'};
+}
+
 const ETAPAS = [
-  {id:'mezcla', n:'1. Inicio de preparación de mezcla', ico:'🧪', f:[
+  {id:'mezcla', n:'1. Inicio de preparación de mezcla', ico:'🧪', req:[], f:[
     {t:'sec', l:'Control de equipos de mezcla'},
     {t:'ok', k:'motor', l:'Motor'}, {t:'ok', k:'bomba_sum', l:'Bomba sumergible'},
     {t:'ok', k:'bomba_movil', l:'Bomba sumergible móvil'}, {t:'ok', k:'taladro', l:'Taladro'},
     {t:'photo', k:'foto', l:'Foto de los equipos de mezcla (opcional)', opt:1},
     {t:'text', k:'obs', l:'Novedades / observaciones', opt:1}]},
-  {id:'inventario', n:'2. Inventario después de la última mezcla', ico:'📦', req:'mezcla', f:[
-    {t:'sec', l:'Cantidades que quedan', p:'Inventario'},
-    {t:'num', k:'dithane', l:'Dithane', u:'L'}, {t:'num', k:'aceite', l:'Aceite', u:'L'},
-    {t:'num', k:'acond', l:'Acondicionador', u:'kg'}, {t:'num', k:'hypotensor', l:'Hypotensor', u:'L'},
-    {t:'num', k:'photon', l:'Photon', u:'L'}, {t:'num', k:'atp', l:'ATP', u:'L'},
-    {t:'multi', k:'sist', l:'Sistémicos (cuál y cantidad en litros)'},
-    {t:'photo', k:'foto', l:'Foto del inventario (opcional)', opt:1},
-    {t:'text', k:'obs', l:'Observaciones', opt:1}]},
-  {id:'prevuelo', n:'3. Antes del vuelo + solicitar autorización', ico:'🌤️', req:'inventario', f:[
+  {id:'prevuelo', n:'2. Antes del vuelo + solicitar autorización', ico:'🌤️', req:['mezcla'], f:[
     {t:'sec', l:'Condiciones del clima', p:'Clima'},
-    {t:'num', k:'temp', l:'Temperatura', u:'°C'}, {t:'photo', k:'foto_temp', l:'Foto de la temperatura', cam:1},
-    {t:'num', k:'humedad', l:'Humedad', u:'%'}, {t:'photo', k:'foto_hum', l:'Foto de la humedad', cam:1},
-    {t:'num', k:'viento', l:'Velocidad del viento', u:'km/h'}, {t:'photo', k:'foto_viento', l:'Foto de la velocidad del viento', cam:1},
-    {t:'num', k:'presion', l:'Presión barométrica', u:'hPa'}, {t:'photo', k:'foto_presion', l:'Foto de la presión barométrica', cam:1},
+    {t:'num', k:'temp', l:'Temperatura', u:'°C'}, {t:'photo', k:'foto_temp', l:'Foto de la temperatura', cam:1, fija:1},
+    {t:'num', k:'humedad', l:'Humedad', u:'%'}, {t:'photo', k:'foto_hum', l:'Foto de la humedad', cam:1, fija:1},
+    {t:'num', k:'viento', l:'Velocidad del viento', u:'km/h'}, {t:'photo', k:'foto_viento', l:'Foto de la velocidad del viento', cam:1, fija:1},
+    {t:'num', k:'presion', l:'Presión barométrica', u:'hPa'}, {t:'photo', k:'foto_presion', l:'Foto de la presión barométrica', cam:1, fija:1},
     ...DRONES.flatMap((d, i) => [...checkDron(d, i),
       {t:'sec', l:`Dron ${d} – Equipos`, p:`Dron ${d}`},
       {t:'num', k:`bat_relay${i}`, l:'Batería antena relay', u:'%'},
       {t:'sel', k:`gas_p${i}`, l:'Gasolina planta EI 14000', o:NIVEL}]),
     {t:'sec', l:'Antena RTK (compartida)', p:'RTK'},
     {t:'num', k:'bat_rtk', l:'Batería antena RTK', u:'%'},
-    ...conteo('ini_'),
     {t:'photo', k:'foto_equipos', l:'Foto de los drones y equipos (opcional)', opt:1},
     {t:'text', k:'obs', l:'Novedades / observaciones', opt:1}]},
-  {id:'autorizacion', n:'4. Autorización y parámetros de vuelo', ico:'🟢', req:'prevuelo', f:[
+  {id:'autorizacion', n:'3. Autorización y parámetros de vuelo', ico:'🟢', req:['prevuelo'], f:[
     {t:'text', k:'por', l:'Autorizado por'},
     {t:'sel', k:'medio', l:'Medio', o:['Llamada', 'Mensaje', 'SMS', 'En persona']},
     {t:'time', k:'hora', l:'Hora de la autorización'},
@@ -132,15 +161,26 @@ const ETAPAS = [
     {t:'num', k:'gota', l:'Tamaño de gota', u:'µm'}, {t:'num', k:'vel', l:'Velocidad de vuelo', u:'m/s'},
     {t:'num', k:'ancho', l:'Ancho de pasada', u:'m'}, {t:'num', k:'vol', l:'Volumen de aplicación', u:'L/ha'},
     {t:'text', k:'obs', l:'Otras indicaciones', opt:1}]},
-  {id:'cierre', n:'5. Finalización de la operación', ico:'🏁', req:'autorizacion', f:[
+  {id:'inventario', n:'4. Inventario de productos', sub:'Puede hacerse antes o después del vuelo', ico:'📦', req:[], f:[
+    {t:'sec', l:'Cantidades que quedan', p:'Inventario'},
+    {t:'num', k:'dithane', l:'Dithane', u:'L'}, {t:'num', k:'aceite', l:'Aceite', u:'L'},
+    {t:'num', k:'acond', l:'Acondicionador', u:'kg'}, {t:'num', k:'hypotensor', l:'Hypotensor', u:'L'},
+    {t:'num', k:'photon', l:'Photon', u:'L'}, {t:'num', k:'atp', l:'ATP', u:'L'},
+    {t:'multi', k:'sist', l:'Sistémicos (cuál y cantidad en litros)'},
+    {t:'photo', k:'foto', l:'Foto del inventario (opcional)', opt:1},
+    {t:'text', k:'obs', l:'Observaciones', opt:1}]},
+  {id:'cierre', n:'5. Finalización de la operación', ico:'🏁', req:['autorizacion', 'inventario'], f:[
     {t:'sec', l:'Horario de vuelo', p:'Vuelo'},
     {t:'time', k:'hora_ini', l:'Hora de inicio'}, {t:'time', k:'hora_fin', l:'Hora de finalización'},
     ...DRONES.flatMap((d, i) => [
       {t:'sec', l:`Dron ${d}`, p:`Dron ${d}`},
       {t:'num', k:`area_${i}`, l:'Área aplicada', u:'ha'},
+      ...[1, 2, 3, 4].map(b => ({t:'num', k:`ciclos_${i}_${b}`, l:`Ciclos batería ${b}`})),
+      {t:'sec', l:`Planta EI 14000 – Dron ${d}`, p:`Dron ${d}`},
       {t:'num', k:`horas_p${i}`, l:'Horas planta EI 14000', u:'h'},
       {t:'sel', k:`gas_p${i}`, l:'Gasolina planta EI 14000', o:NIVEL},
-      ...[1, 2, 3, 4].map(b => ({t:'num', k:`ciclos_${i}_${b}`, l:`Ciclos batería ${b}`}))]),
+      {t:'sel', k:`aceite_p${i}`, l:'Nivel de aceite planta', o:ACEITE},
+      {t:'mant', i}]),
     {t:'sec', l:'Furgón', p:'Furgón'},
     {t:'sel', k:'gas_furgon', l:'Gasolina del furgón', o:NIVEL},
     {t:'sec', l:'Mapa de aplicación', p:'Mapa'},
@@ -157,7 +197,7 @@ const NOVEDAD = {id:'novedad', n:'Novedad durante la operación', ico:'⚠️', 
 const ALL = [...ETAPAS, NOVEDAD];
 ALL.forEach(e => { let p = ''; e.f.forEach(f => {
   if (f.t === 'sec') { p = f.p || ''; return; }
-  f.L = (p ? p + ' – ' : '') + f.l + (f.u ? ` (${f.u})` : '');
+  if (f.l) f.L = (p ? p + ' – ' : '') + f.l + (f.u ? ` (${f.u})` : '');
 }); });
 
 /* ---------- Almacenamiento local (IndexedDB) ---------- */
@@ -178,6 +218,19 @@ const DB = {
   get: id => DB.run('readonly', s => s.get(id)),
   del: id => DB.run('readwrite', s => s.delete(id))
 };
+
+/* ---------- Servidor ---------- */
+async function api(body, cred) {
+  const user = cred || LS.get('user', null) || {};
+  const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 90000);
+  try {
+    const res = await fetch(CONFIG.API_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(Object.assign({usuario:user.u, clave:user.c}, body)), signal:ctl.signal});
+    const j = await res.json();
+    if (j.estado) LS.set('estado', Object.assign(j.estado, {t:Date.now()}));
+    return j;
+  } finally { clearTimeout(to); }
+}
 
 /* ---------- Fotos y GPS ---------- */
 let FOT = {}, GPS = '';
@@ -205,17 +258,12 @@ function comprimir(file) {
 
 /* ---------- Pantallas ---------- */
 function avisos() {
-  let h = '';
-  if (!/^https:\/\/script\.google\.com\//.test(CONFIG.API_URL))
-    h += `<div class="alerta">⚙️ Falta configurar la URL del servidor (CONFIG.API_URL). Los registros se guardan pero no se envían.</div>`;
   const inst = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-  if (!inst) {
-    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    h += `<div class="info"><b>📲 Instale la app:</b> ${ios
-      ? 'en Safari toque <b>Compartir ⬆️</b> → <b>Agregar a pantalla de inicio</b>. Use siempre el ícono, no Safari.'
-      : 'en Chrome toque <b>⋮</b> → <b>Instalar app</b> o <b>Agregar a pantalla principal</b>.'}</div>`;
-  }
-  return h;
+  if (inst) return '';
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  return `<div class="info"><b>📲 Instale la app:</b> ${ios
+    ? 'en Safari toque <b>Compartir ⬆️</b> → <b>Agregar a pantalla de inicio</b>. Use siempre el ícono, no Safari.'
+    : 'en Chrome toque <b>⋮</b> → <b>Instalar app</b> o <b>Agregar a pantalla principal</b>.'}</div>`;
 }
 function hist(txt, d) { LS.set('hist', [{txt, d:d.toISOString()}, ...LS.get('hist', [])].slice(0, 15)); }
 function histHTML() {
@@ -233,14 +281,12 @@ function login() {
     const fd = new FormData(ev.target), u = fd.get('u').trim(), c = fd.get('c'), b = $('#blog');
     b.disabled = true; b.textContent = 'Verificando…';
     try {
-      const res = await fetch(CONFIG.API_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({tipo:'login', usuario:u, clave:c})});
-      const j = await res.json();
+      const j = await api({tipo:'login'}, {u, c});
       if (!j.ok) throw new Error(j.error === 'auth' ? 'Usuario o contraseña incorrectos' : j.error);
-      LS.set('user', {u, c, nombre:j.nombre || u}); home(); sync();
+      LS.set('user', {u, c, nombre:j.nombre || u, rol:j.rol || 'operario'}); home(); sync();
     } catch (err) {
       const m = !navigator.onLine ? 'Sin internet. El primer ingreso necesita señal.'
-        : /fetch|network|load/i.test(err.message) ? 'No se pudo conectar con el servidor. Revise la señal o avise al administrador.' : err.message;
+        : /fetch|network|load|abort/i.test(err.message) ? 'No se pudo conectar con el servidor. Revise la señal o avise al administrador.' : err.message;
       $('#err').innerHTML = `<div class="alerta">${esc(m)}</div>`;
       b.disabled = false; b.textContent = 'Ingresar';
     }
@@ -264,6 +310,7 @@ function home() {
   if (!user) return login();
   const op = LS.get('op', null);
   let h = avisos();
+  if (user.rol === 'admin') h += `<button class="btn azul" id="bpanel" style="margin:0 0 12px">📊 Panel de administración</button>`;
   if (!op) {
     const fincas = LS.get('fincas', []);
     h += `<div class="card"><h2>Nueva operación</h2><p class="hist">👤 ${esc(user.nombre)}</p><form id="fop">
@@ -273,38 +320,43 @@ function home() {
     app.innerHTML = h;
     $('#fop').onsubmit = ev => {
       ev.preventDefault();
-      const f = new FormData(ev.target).get('finca').trim(), r = user.nombre;
+      const f = new FormData(ev.target).get('finca').trim();
       if (!f) return;
       LS.set('fincas', [f, ...fincas.filter(x => x !== f)].slice(0, 15));
       const d = new Date();
-      LS.set('op', {id:'OP-' + stamp(d), finca:f, resp:r, ini:d.toISOString(), done:{}, nov:0});
+      LS.set('op', {id:'OP-' + stamp(d) + '-' + Math.random().toString(36).slice(2, 5).toUpperCase(), finca:f, resp:user.nombre, ini:d.toISOString(), done:{}, reg:{}, nov:0});
       home();
     };
   } else {
+    op.reg = op.reg || {};
     h += `<div class="card"><h2>📍 ${esc(op.finca)}</h2><div class="hist">👤 ${esc(op.resp)} · ${esc(op.id)}<br>Iniciada: ${fmt(op.ini)}</div></div>`;
     h += ETAPAS.map(e => {
-      const d = op.done[e.id], bloq = e.req && !op.done[e.req];
-      return `<button class="etapa ${d ? 'ok' : ''}" ${d || bloq ? 'disabled' : ''} data-e="${e.id}"><span class="i">${d ? '✅' : e.ico}</span>
-        <span>${e.n}<small>${d ? 'Registrado ' + fmt(d) : bloq ? 'Primero complete la etapa anterior' : 'Pendiente'}</small></span></button>`;
+      const d = op.done[e.id], falta = e.req.filter(x => !op.done[x]);
+      const txt = d ? `Registrado ${hhmm(d)}${op.reg[e.id] ? ' · ✏️ toque para corregir' : ''}`
+        : falta.length ? 'Primero complete: ' + falta.map(x => ETAPAS.find(y => y.id === x).n.split('.')[0]).join(' y ')
+        : (e.sub || 'Pendiente');
+      return `<button class="etapa ${d ? 'ok' : ''}" ${(!d && falta.length) || (d && !op.reg[e.id]) ? 'disabled' : ''} data-e="${e.id}">
+        <span class="i">${d ? '✅' : e.ico}</span><span>${e.n}<small>${txt}</small></span></button>`;
     }).join('');
     h += `<button class="btn rojo" data-e="novedad">⚠️ Reportar novedad${op.nov ? ` (${op.nov} reportadas)` : ''}</button>
       <button class="btn sec" id="anular" style="margin-top:28px;font-size:14px;padding:10px">Anular esta operación</button>`;
     app.innerHTML = h;
-    app.querySelectorAll('[data-e]').forEach(b => b.onclick = () => abrir(b.dataset.e));
+    app.querySelectorAll('[data-e]').forEach(b => b.onclick = () => abrir(b.dataset.e, op.done[b.dataset.e] && b.dataset.e !== 'novedad'));
     $('#anular').onclick = () => {
       if (confirm('¿Anular la operación? Lo que ya se guardó se conserva y se envía.')) { LS.set('op', null); home(); }
     };
   }
+  if ($('#bpanel')) $('#bpanel').onclick = () => panel('ops');
   badge();
 }
 
 function chips(f, opts, req) {
   return `<div class="fl">${esc(f.l)}${req}<div class="chips">${opts.map(o =>
-    `<label class="chip ${o === 'Falla' || o === 'No' ? 'bad' : ''}"><input type="radio" name="${f.k}" value="${esc(o)}"><span>${esc(o)}</span></label>`).join('')}</div></div>`;
+    `<label class="chip ${['Falla', 'No', 'Alto', 'No se revisó', 'Bajo – se niveló'].includes(o) ? 'bad' : ''}"><input type="radio" name="${f.k}" value="${esc(o)}"><span>${esc(o)}</span></label>`).join('')}</div></div>`;
 }
-function campo(f) {
+function campo(f, corr) {
   const req = f.opt ? '' : ' <b class="r">*</b>';
-  const now = new Date(), hhmm = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const now = new Date(), hm = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
   switch (f.t) {
     case 'sec': return `<h3>${esc(f.l)}</h3>`;
     case 'ok': return chips(f, ['OK', 'Falla'], req);
@@ -312,9 +364,11 @@ function campo(f) {
     case 'sel': return chips(f, f.o, req);
     case 'num': return `<label class="fl">${esc(f.l)}${f.u ? ` <small>(${f.u})</small>` : ''}${req}<input type="number" inputmode="decimal" step="any" name="${f.k}"></label>`;
     case 'count': return `<label class="fl">${esc(f.l)} <small>(deben ser ${f.exp})</small>${req}<input type="number" inputmode="numeric" step="1" min="0" name="${f.k}"></label>`;
-    case 'time': return `<label class="fl">${esc(f.l)}${req}<input type="time" name="${f.k}" value="${hhmm}"></label>`;
-    case 'photo': return `<div class="fl">${esc(f.l)}${req}<br><label class="btnfoto">📷 Tomar foto<input type="file" accept="image/*" ${f.cam ? 'capture="environment"' : ''} data-k="${f.k}" hidden></label><img id="pv_${f.k}" class="pv" hidden alt=""></div>`;
-    case 'multi': return `<div class="fl">${esc(f.l)}${req}<div id="m_${f.k}"></div><button type="button" class="btn sec" style="padding:10px;font-size:15px;margin-top:8px" data-add="${f.k}">➕ Agregar otro</button></div>`;
+    case 'time': return `<label class="fl">${esc(f.l)}${req}<input type="time" name="${f.k}" value="${hm}"></label>`;
+    case 'photo': return corr ? `<div class="fl">${esc(f.l)}<br><small>📷 ${f.fija ? 'Foto registrada como evidencia (no se puede cambiar)' : 'Las fotos ya registradas se conservan'}</small></div>`
+      : `<div class="fl">${esc(f.l)}${req}<br><label class="btnfoto">📷 Tomar foto<input type="file" accept="image/*" ${f.cam ? 'capture="environment"' : ''} data-k="${f.k}" hidden></label><img id="pv_${f.k}" class="pv" hidden alt=""></div>`;
+    case 'multi': return `<div class="fl">${esc(f.l)}${req}<div id="m_${f.k}"></div><button type="button" class="btn sec chico" style="margin-top:8px" data-add="${f.k}">➕ Agregar otro</button></div>`;
+    case 'mant': return `<div class="mantbox"><h3 style="margin-top:10px">🔧 Mantenimiento – Dron ${esc(DRONES[f.i])}</h3><div id="mant_${f.i}"></div></div>`;
     case 'text': return /^(obs|desc)/.test(f.k)
       ? `<label class="fl">${esc(f.l)}${req}<textarea name="${f.k}"></textarea></label>`
       : `<label class="fl">${esc(f.l)}${req}<input type="text" name="${f.k}"></label>`;
@@ -322,13 +376,39 @@ function campo(f) {
   return '';
 }
 
-function abrir(id) {
+/* foto de formulario (para corregir) */
+function snapForm(c) {
+  const s = {__multi:{}};
+  c.querySelectorAll('input[name],textarea[name]').forEach(el => {
+    if (el.type === 'radio') { if (el.checked) s[el.name] = el.value; }
+    else if (el.type === 'checkbox') s[el.name] = el.checked;
+    else if (el.type !== 'file') s[el.name] = el.value;
+  });
+  c.querySelectorAll('[id^="m_"]').forEach(m => s.__multi[m.id] = [...m.querySelectorAll('.mrow')]
+    .map(r => [r.querySelector('[data-c=n]').value, r.querySelector('[data-c=l]').value]));
+  return s;
+}
+function fillForm(c, s) {
+  if (!s) return;
+  c.querySelectorAll('input[name],textarea[name]').forEach(el => {
+    if (!(el.name in s)) return;
+    if (el.type === 'radio') el.checked = el.value === s[el.name];
+    else if (el.type === 'checkbox') el.checked = !!s[el.name];
+    else if (el.type !== 'file') el.value = s[el.name];
+  });
+}
+
+function abrir(id, corregir) {
   const e = ALL.find(x => x.id === id), op = LS.get('op', null);
   if (!op || !e) return home();
+  const corr = corregir ? (op.reg || {})[id] : null;
+  if (corregir && !corr) return;
   FOT = {}; GPS = ''; pedirGPS();
-  app.innerHTML = `<div class="card"><button class="btn sec" id="volver" style="margin:0 0 10px;padding:10px">← Volver</button>
-    <h2>${e.ico} ${esc(e.n)}</h2><div class="hist">📍 ${esc(op.finca)} · 👤 ${esc(op.resp)}</div>
-    <form id="frm" novalidate>${e.f.map(campo).join('')}<div id="err"></div><button class="btn" id="bguardar">💾 Guardar registro</button></form></div>`;
+  app.innerHTML = `<div class="card"><button class="btn sec chico" id="volver" style="margin:0 0 10px">← Volver</button>
+    <h2>${corr ? '✏️ Corregir · ' : e.ico + ' '}${esc(e.n)}</h2><div class="hist">📍 ${esc(op.finca)} · 👤 ${esc(op.resp)}</div>
+    ${corr ? `<div class="info" style="margin-top:10px">Está corrigiendo un formulario registrado a las ${hhmm(corr.fecha)}. Queda historial de la corrección.</div>` : ''}
+    <form id="frm" novalidate>${e.f.map(f => campo(f, !!corr)).join('')}<div id="err"></div>
+    <button class="btn" id="bguardar">💾 ${corr ? 'Guardar corrección' : 'Guardar registro'}</button></form></div>`;
   scrollTo(0, 0);
   $('#volver').onclick = () => { if (confirm('¿Salir sin guardar?')) home(); };
   app.querySelectorAll('input[type=file]').forEach(inp => inp.onchange = async () => {
@@ -337,48 +417,101 @@ function abrir(id) {
     try { FOT[inp.dataset.k] = await comprimir(file); pv.src = FOT[inp.dataset.k]; pv.hidden = false; }
     catch { alert('No se pudo procesar la foto. Intente de nuevo.'); }
   });
-  app.querySelectorAll('[data-add]').forEach(b => { const k = b.dataset.add; filaMulti(k); b.onclick = () => filaMulti(k); });
-  $('#frm').onsubmit = ev => { ev.preventDefault(); guardar(e, op, ev.target); };
+  app.querySelectorAll('[data-add]').forEach(b => {
+    const k = b.dataset.add, filas = corr?.snap?.__multi?.['m_' + k];
+    (filas && filas.length ? filas : [['', '']]).forEach(x => filaMulti(k, x));
+    b.onclick = () => filaMulti(k);
+  });
+  const frm = $('#frm');
+  if (corr) fillForm(frm, corr.snap);
+  e.f.filter(f => f.t === 'mant').forEach(f => {
+    const inp = frm.querySelector(`input[name="horas_p${f.i}"]`);
+    renderMant(f.i, corr?.snap); inp.addEventListener('input', () => renderMant(f.i));
+  });
+  frm.onsubmit = ev => { ev.preventDefault(); guardar(e, op, ev.target, corr); };
 }
-function filaMulti(k) {
+function filaMulti(k, val) {
   const c = $('#m_' + k), div = document.createElement('div');
   div.className = 'mrow';
   div.innerHTML = `<input type="text" placeholder="Cuál" data-c="n" style="flex:2"><input type="number" inputmode="decimal" step="any" placeholder="Litros" data-c="l" style="flex:1"><button type="button" class="xdel">✕</button>`;
+  if (val) { div.querySelector('[data-c=n]').value = val[0]; div.querySelector('[data-c=l]').value = val[1]; }
   div.querySelector('.xdel').onclick = () => { if (c.children.length > 1) div.remove(); else div.querySelectorAll('input').forEach(i => i.value = ''); };
   c.appendChild(div);
 }
 
-function leer(e, frm) {
-  const campos = [], vals = {}, alertas = [], faltan = [];
+/* Mantenimiento: muestra lo que está cerca según las horas digitadas */
+function ultMant(i) { return ((LS.get('estado', {}) || {}).plantas || {})[DRONES[i]] || {}; }
+function renderMant(i, snap) {
+  const box = $('#mant_' + i); if (!box) return;
+  const H = +($(`input[name="horas_p${i}"]`)?.value || 0);
+  const prev = snap || snapForm(box);
+  if (!H) { box.innerHTML = '<p class="hist">Digite las horas de la planta para ver el mantenimiento que toca.</p>'; return; }
+  const items = MANT.map(m => ({m, e:proxMant(m, H, ultMant(i))}));
+  const due = items.filter(x => x.e.pct >= 0.7), otros = items.filter(x => x.e.pct < 0.7);
+  const key = due.map(x => x.m.k).join();
+  if (box.dataset.key === key && !snap) return;   // no redibujar si no cambió lo que toca
+  box.dataset.key = key;
+  box.innerHTML = (due.length ? due.map(({m, e}) => `<div class="fl mantq ${e.sem}">${e.sem === 'rojo' ? '🔴' : '🟡'} ${esc(m.l)}
+      ${m.det ? `<br><small>${esc(m.det)}</small>` : ''}<br><small>${e.faltan <= 0 ? `VENCIDO (tocaba a las ${e.prox} h)` : `Toca a las ${e.prox} h · faltan ${e.faltan} h`}</small>
+      <div style="margin-top:6px">¿Se realizó hoy? <b class="r">*</b></div><div class="chips">${['Sí', 'No'].map(o =>
+        `<label class="chip ${o === 'No' ? 'bad' : ''}"><input type="radio" name="mant_${i}_${m.k}" value="${o}"><span>${o}</span></label>`).join('')}</div></div>`).join('')
+      : '<p class="hist">✅ No hay mantenimiento próximo para esta planta.</p>') +
+    (otros.length ? `<details class="fl"><summary>Registrar otro mantenimiento hecho hoy</summary>${otros.map(({m, e}) =>
+      `<label class="ck"><input type="checkbox" name="mantx_${i}_${m.k}"> ${esc(m.l)} <small>(próximo: ${e.prox} h)</small></label>`).join('')}</details>` : '') +
+    `<label class="fl">Notas de mantenimiento <small>(ej. pieza puntual cambiada)</small><textarea name="mantn_${i}" style="min-height:60px"></textarea></label>`;
+  fillForm(box, prev);
+}
+
+function leer(e, frm, corr) {
+  const campos = [], vals = {}, alertas = [], faltan = [], mant = [];
   for (const f of e.f) {
     if (f.t === 'sec') continue;
-    let v;
+    if (f.t === 'photo') { vals[f.k] = FOT[f.k] ? '📷' : ''; if (!corr && !f.opt && !FOT[f.k]) faltan.push(f.L); continue; }
     if (f.t === 'multi') {
       const filas = [...frm.querySelectorAll(`#m_${f.k} .mrow`)].map(r => [r.querySelector('[data-c=n]').value.trim(), r.querySelector('[data-c=l]').value.trim()]).filter(x => x[0] || x[1]);
       if (!filas.length && !f.opt) { faltan.push(f.l + ' (agregue al menos uno)'); continue; }
       if (filas.some(x => !x[0] || !x[1])) { faltan.push(f.l + ': complete cuál y cantidad'); continue; }
       filas.forEach((x, i) => { campos.push({l:`Inventario – Sistémico ${i + 1} (cuál)`, v:x[0]}); campos.push({l:`Inventario – Sistémico ${i + 1} (L)`, v:x[1]}); });
-      vals[f.k] = filas.map(x => `${x[0]}: ${x[1]} L`).join('; ');
       continue;
     }
+    if (f.t === 'mant') {
+      const i = f.i, d = DRONES[i], H = +vals['horas_p' + i] || 0;
+      if (!H) continue;
+      MANT.forEach(m => {
+        const st = proxMant(m, H, ultMant(i));
+        const due = frm.querySelector(`input[name="mant_${i}_${m.k}"]`);
+        const x = frm.querySelector(`input[name="mantx_${i}_${m.k}"]`);
+        let v = '';
+        if (due) { v = frm.querySelector(`input[name="mant_${i}_${m.k}"]:checked`)?.value || ''; if (!v) { faltan.push(`Dron ${d} – ${m.l}: ¿se realizó hoy?`); return; } }
+        else if (x && x.checked) v = 'Sí';
+        if (!v) return;
+        campos.push({l:`Dron ${d} – Mantenimiento – ${m.l}`, v});
+        if (v === 'Sí') mant.push({dron:d, item:m.k, nombre:m.l, horas:H});
+        if (v === 'No' && st.sem === 'rojo') alertas.push(`Dron ${d} – ${m.l}: ${st.faltan <= 0 ? 'VENCIDO' : 'faltan ' + st.faltan + ' h'} y NO se realizó`);
+      });
+      const notas = (frm.elements['mantn_' + i]?.value || '').trim();
+      if (notas) { campos.push({l:`Dron ${d} – Mantenimiento – Notas`, v:notas}); mant.forEach(x => { if (x.dron === d) x.notas = notas; }); }
+      continue;
+    }
+    let v;
     if (['ok', 'yn', 'sel'].includes(f.t)) v = frm.querySelector(`input[name="${f.k}"]:checked`)?.value || '';
-    else if (f.t === 'photo') v = FOT[f.k] ? '📷' : '';
     else v = (frm.elements[f.k]?.value || '').trim();
     vals[f.k] = v;
     if (!v && !f.opt) { faltan.push(f.L); continue; }
     if (v === 'Falla') alertas.push(`${f.L}: FALLA`);
     if (f.t === 'count' && v !== '' && +v !== f.exp) alertas.push(`${f.L}: hay ${v} de ${f.exp}`);
     if (f.k === 'mapa_ok' && v === 'No') alertas.push('Mapa de aplicación NO verificado');
+    if (/^aceite_p/.test(f.k) && v && v !== 'Óptimo') alertas.push(`${f.L}: ${v}`);
     if (f.k === 'accion' && v.startsWith('Operación suspendida')) alertas.push('OPERACIÓN SUSPENDIDA – esperando indicaciones');
-    if (f.t !== 'photo') campos.push({l:f.L, v});
+    campos.push({l:f.L, v});
   }
   const obs = e.f.find(f => f.k === 'obs');
-  if (obs && alertas.length && !vals.obs) faltan.push('Observaciones (obligatorio cuando hay fallas o faltantes)');
-  return {campos, vals, alertas, faltan};
+  if (obs && alertas.length && !vals.obs) faltan.push('Observaciones (obligatorio cuando hay fallas, faltantes o alertas)');
+  return {campos, vals, alertas, faltan, mant};
 }
 
-async function guardar(e, op, frm) {
-  const {campos, vals, alertas, faltan} = leer(e, frm);
+async function guardar(e, op, frm, corr) {
+  const {campos, vals, alertas, faltan, mant} = leer(e, frm, corr);
   if (faltan.length) {
     $('#err').innerHTML = `<div class="alerta"><b>Faltan datos obligatorios:</b><br>${faltan.map(esc).join('<br>')}</div>`;
     $('#err').scrollIntoView({behavior:'smooth', block:'center'});
@@ -391,17 +524,25 @@ async function guardar(e, op, frm) {
   }
   const d = new Date(), fotos = {};
   e.f.filter(f => f.t === 'photo' && FOT[f.k]).forEach(f => fotos[f.l] = FOT[f.k]);
-  const r = {id:uid(), op:op.id, finca:op.finca, resp:op.resp, etapa:e.id, etapaNombre:e.n,
-    fecha:d.toISOString(), fechaLocal:fmt(d), gps:GPS, campos, alertas, fotos, vals};
+  const snap = snapForm(frm);
+  let r = {id:corr ? corr.id : uid(), op:op.id, finca:op.finca, resp:op.resp, etapa:e.id, etapaNombre:e.n,
+    fecha:corr ? corr.fecha : d.toISOString(), fechaLocal:fmt(d), gps:GPS, campos, alertas, fotos, vals, mant};
+  if (corr) {
+    let pend = null; try { pend = await DB.get(corr.id); } catch {}
+    if (pend) { r.fotos = pend.fotos; r.gps = pend.gps || r.gps; }   // aún no salía: se reemplaza en la cola
+    else { r.correccion = true; r.cid = uid(); r.fotos = {}; }
+  }
   try { await DB.put(r); }
   catch (err) {
     alert('No se pudo guardar en el teléfono (' + err.message + '). Libere espacio e intente de nuevo.');
     btn.disabled = false; btn.textContent = '💾 Guardar registro'; return;
   }
-  if (e.id === 'novedad') op.nov = (op.nov || 0) + 1; else op.done[e.id] = d.toISOString();
-  hist(`${e.n} · ${op.finca}`, d);
+  op.reg = op.reg || {};
+  if (e.id === 'novedad') op.nov = (op.nov || 0) + 1;
+  else { if (!corr) op.done[e.id] = d.toISOString(); op.reg[e.id] = {id:r.id, fecha:r.fecha, snap}; }
+  hist(`${corr ? '✏️ ' : ''}${e.n} · ${op.finca}`, d);
   LS.set('op', e.id === 'cierre' ? null : op);
-  guardado(r, e);
+  guardado(r, e, corr);
   sync();
   vigilar(r.id);
 }
@@ -413,16 +554,116 @@ function vigilar(id) {   // muestra "enviado con éxito" cuando el registro sale
     else el.innerHTML = navigator.onLine ? '⏳ Enviando…' : '📴 Sin señal: quedó guardado en el teléfono y se enviará automáticamente cuando haya internet.';
   }, 1500);
 }
-
-function guardado(r, e) {
-  const pedir = e.id === 'prevuelo';
-  app.innerHTML = `<div class="card"><h2>💾 Formulario guardado</h2><p class="hist">${esc(e.n)}<br>${r.fechaLocal}</p>
+function guardado(r, e, corr) {
+  const pedir = e.id === 'prevuelo' && !corr;
+  app.innerHTML = `<div class="card"><h2>${corr ? '✏️ Corrección guardada' : '💾 Formulario guardado'}</h2><p class="hist">${esc(e.n)}<br>${r.fechaLocal}</p>
     <div id="estado" data-id="${r.id}">⏳ Enviando…</div>
     ${r.alertas.length ? `<div class="alerta">⚠️ ${r.alertas.map(esc).join('<br>')}</div>` : ''}
-    ${pedir ? '<div class="info" style="margin-top:12px">📞 <b>Solicite la autorización</b> por llamada o mensaje.<br>⛔ <b>No inicie el vuelo</b> hasta recibirla. Cuando la reciba, registre la etapa 4.</div>' : ''}
+    ${pedir ? '<div class="info" style="margin-top:12px">📞 <b>Solicite la autorización</b> por llamada o mensaje.<br>⛔ <b>No inicie el vuelo</b> hasta recibirla. Cuando la reciba, registre la etapa 3.</div>' : ''}
     ${e.id === 'novedad' && r.vals.accion?.startsWith('Operación suspendida') ? '<div class="info" style="margin-top:12px">🛑 Operación suspendida. Espere indicaciones antes de continuar.</div>' : ''}
     <button class="btn sec" id="ok">Volver al inicio</button></div>`;
   $('#ok').onclick = home; scrollTo(0, 0);
+}
+
+/* ================= PANEL DE ADMINISTRACIÓN ================= */
+const ETQ = {mezcla:'Mezcla', prevuelo:'Antes del vuelo', autorizacion:'Autorización', inventario:'Inventario', cierre:'Cierre', novedad:'Novedad'};
+const ORDEN = ['mezcla', 'prevuelo', 'autorizacion', 'inventario', 'cierre'];
+const SEM = s => `<span class="sem ${s}"></span>`;
+const malo = v => /^(Falla|No|Alto|No se revisó|Bajo – se niveló)$/.test(String(v)) ? `<span class="malo">${esc(v)}</span>` : esc(v);
+let PF = null;   // filtro de fechas del panel
+
+function panel(tab) {
+  scrollTo(0, 0);
+  app.innerHTML = `<div class="card"><button class="btn sec chico" id="volver" style="margin:0 0 10px">← Volver</button><h2>📊 Panel de administración</h2>
+    <div class="tabs"><button data-t="ops" class="${tab === 'ops' ? 'on' : ''}">Operaciones</button><button data-t="eq" class="${tab === 'eq' ? 'on' : ''}">Baterías y plantas</button></div>
+    <div id="pc"><p class="hist">Cargando…</p></div></div>`;
+  $('#volver').onclick = home;
+  app.querySelectorAll('[data-t]').forEach(b => b.onclick = () => panel(b.dataset.t));
+  if (!navigator.onLine) { $('#pc').innerHTML = '<div class="alerta">El panel necesita internet.</div>'; return; }
+  tab === 'eq' ? panelEq() : panelOps();
+}
+async function panelOps() {
+  PF = PF || {d:isoDia(new Date(Date.now() - 30 * 864e5)), h:isoDia(new Date())};
+  $('#pc').innerHTML = `<div class="frow"><label>Desde<input type="date" id="fd" value="${PF.d}"></label><label>Hasta<input type="date" id="fh" value="${PF.h}"></label></div><div id="lista"><p class="hist">Cargando…</p></div>`;
+  const cargar = async () => {
+    PF = {d:$('#fd').value, h:$('#fh').value};
+    $('#lista').innerHTML = '<p class="hist">Cargando…</p>';
+    try {
+      const j = await api({tipo:'panel_ops', desde:PF.d, hasta:PF.h});
+      if (!j.ok) throw new Error(j.error);
+      if (!j.ops.length) { $('#lista').innerHTML = '<p class="hist">No hay operaciones en esas fechas.</p>'; return; }
+      $('#lista').innerHTML = `<p class="hist">${j.ops.length} operación(es) · ${j.ops.reduce((s, o) => s + (+o.ha || 0), 0).toFixed(1)} ha</p>` + j.ops.map(o => `
+        <button class="opc" data-op="${esc(o.op)}"><b>${esc(o.dia)} · ${esc(o.finca)}</b>${o.ha ? ` · ${esc(o.ha)} ha` : ''}<br>
+        <small>👤 ${esc(o.resp)}${o.alertas ? ` · <span class="malo">⚠️ ${o.alertas} alerta(s)</span>` : ''}${o.nov ? ` · ${o.nov} novedad(es)` : ''}${o.corr ? ` · ✏️ ${o.corr} corregido(s)` : ''}</small><br>
+        ${ORDEN.map((k, i) => `<span class="et ${o.etapas[k] ? 'ok' : 'no'}">${o.etapas[k] ? '✅' : '⬜'} ${i + 1}</span>`).join('')}</button>`).join('');
+      app.querySelectorAll('[data-op]').forEach(b => b.onclick = () => detalleOp(b.dataset.op));
+    } catch (err) { $('#lista').innerHTML = `<div class="alerta">No se pudo cargar: ${esc(err.message)}</div>`; }
+  };
+  $('#fd').onchange = cargar; $('#fh').onchange = cargar; cargar();
+}
+async function detalleOp(opId) {
+  scrollTo(0, 0);
+  app.innerHTML = `<div class="card"><button class="btn sec chico" id="volver" style="margin:0 0 10px">← Operaciones</button><div id="det"><p class="hist">Cargando…</p></div></div>`;
+  $('#volver').onclick = () => panel('ops');
+  let j;
+  try { j = await api({tipo:'panel_op', op:opId}); if (!j.ok) throw new Error(j.error); }
+  catch (err) { $('#det').innerHTML = `<div class="alerta">No se pudo cargar: ${esc(err.message)}</div>`; return; }
+  const regs = j.regs.sort((a, b) => a.fecha < b.fecha ? -1 : 1);
+  const r0 = regs[0] || {};
+  $('#det').innerHTML = `<h2>📍 ${esc(r0.finca || '')}</h2><div class="hist">👤 ${esc(r0.resp || '')} · ${esc(opId)}</div>
+    ${ORDEN.filter(k => !regs.some(r => r.etapa === k)).map(k => `<div class="alerta">${ETQ[k]}: NO REPORTADA</div>`).join('')}` +
+    regs.map((r, n) => `<div class="card" style="box-shadow:none;border:1.5px solid #e3e7e5;margin-top:10px">
+      <h3 style="margin-top:0">${esc(ETQ[r.etapa])}${r.corregido ? ` · ✏️ corregido ${r.corregido} ${r.corregido === 1 ? 'vez' : 'veces'}` : ''}</h3>
+      <div class="hist">Diligenciado ${fmt(r.fecha)} · retraso ${esc(r.retraso)} min</div>
+      ${r.alertas ? `<div class="alerta">⚠️ ${esc(r.alertas).split(' | ').join('<br>')}</div>` : ''}
+      <table class="t">${r.campos.map(([l, v]) => `<tr><td>${esc(l)}</td><td>${malo(v)}</td></tr>`).join('')}</table>
+      ${r.fotos.length ? `<div class="ths">${r.fotos.map(f => `<figure><img data-f="${esc(f.id)}" alt=""><figcaption>${esc(f.n)}</figcaption></figure>`).join('')}</div>` : ''}
+      <button class="btn sec chico" data-ed="${n}">✏️ Corregir</button></div>`).join('') +
+    (j.correcciones.length ? `<h3>Historial de correcciones</h3><table class="t"><tr><th>Fecha</th><th>Quién</th><th>Campo</th><th>Antes → Después</th></tr>${j.correcciones.map(c =>
+      `<tr><td>${esc(c.fecha)}</td><td>${esc(c.quien)}</td><td>${esc(c.etapa)} · ${esc(c.campo)}</td><td>${esc(c.antes)} → <b>${esc(c.despues)}</b></td></tr>`).join('')}</table>` : '');
+  app.querySelectorAll('[data-ed]').forEach(b => b.onclick = () => editor(regs[+b.dataset.ed], opId));
+  for (const img of app.querySelectorAll('img[data-f]')) {   // fotos una por una, sin abrir Drive
+    try { const f = await api({tipo:'foto', id:img.dataset.f}); if (f.ok) img.src = f.data; else img.alt = 'No disponible'; }
+    catch { img.alt = 'No disponible'; }
+  }
+}
+function editor(r, opId) {
+  scrollTo(0, 0);
+  app.innerHTML = `<div class="card"><button class="btn sec chico" id="volver" style="margin:0 0 10px">← Cancelar</button>
+    <h2>✏️ Corregir · ${esc(ETQ[r.etapa])}</h2><div class="info">Solo cambie los datos que estén mal. Cada cambio queda en el historial con su nombre.</div>
+    <form id="fed">${r.campos.map(([l, v], i) => `<label class="fl">${esc(l)}<input type="text" data-i="${i}" value="${esc(v)}"></label>`).join('')}
+    <div id="err"></div><button class="btn" id="bed">💾 Guardar corrección</button></form></div>`;
+  $('#volver').onclick = () => detalleOp(opId);
+  $('#fed').onsubmit = async ev => {
+    ev.preventDefault();
+    const cambios = [...app.querySelectorAll('[data-i]')].map(inp => ({l:r.campos[+inp.dataset.i][0], v:inp.value.trim(), antes:String(r.campos[+inp.dataset.i][1])}))
+      .filter(c => c.v !== c.antes).map(({l, v}) => ({l, v}));
+    if (!cambios.length) return detalleOp(opId);
+    const b = $('#bed'); b.disabled = true; b.textContent = 'Guardando…';
+    try {
+      const j = await api({tipo:'corregir', id:r.id, etapa:r.etapa, op:opId, campos:cambios});
+      if (!j.ok) throw new Error(j.error);
+      detalleOp(opId);
+    } catch (err) { $('#err').innerHTML = `<div class="alerta">${esc(err.message)}</div>`; b.disabled = false; b.textContent = '💾 Guardar corrección'; }
+  };
+}
+async function panelEq() {
+  try {
+    const j = await api({tipo:'panel_estado'});
+    if (!j.ok) throw new Error(j.error);
+    $('#pc').innerHTML = `<div class="frow" style="text-align:center;margin:6px 0 10px">
+        <div class="card" style="flex:1;margin:0"><small>Últimos 7 días</small><br><b style="font-size:20px">${esc(j.kpis.ha7)} ha</b></div>
+        <div class="card" style="flex:1;margin:0"><small>Últimos 30 días</small><br><b style="font-size:20px">${esc(j.kpis.ha30)} ha</b></div>
+        <div class="card" style="flex:1;margin:0"><small>Operaciones 30 d</small><br><b style="font-size:20px">${esc(j.kpis.ops30)}</b></div></div>
+      <h3>🔋 Garantía de baterías (vida útil ${j.vida} ciclos)</h3>
+      ${j.baterias.length ? `<table class="t"><tr><th>Batería</th><th>Ciclos</th><th>Restantes</th><th>Vida usada</th></tr>${j.baterias.map(b =>
+        `<tr><td>${SEM(b.sem)}${esc(b.bat)}</td><td><b>${esc(b.ciclos)}</b></td><td>${esc(b.rest)}</td><td>${esc(b.pct)}%</td></tr>`).join('')}</table>
+        <p class="hist">Según el cierre del ${esc(j.refDia)}. 🟡 desde 70 % · 🔴 desde 90 %</p>` : '<p class="hist">Aún no hay cierres registrados.</p>'}
+      <h3>⚙️ Garantía y mantenimiento de plantas EI 14000</h3>
+      ${j.plantas.map(p => `<div style="margin-top:8px"><b>Planta – Dron ${esc(p.dron)}</b><br><small>Horómetro: <b>${esc(p.horometro)} h</b> · Aceite: ${malo(p.aceite || '—')}</small>
+        <table class="t"><tr><th>Mantenimiento</th><th>Último</th><th>Próximo</th><th>Faltan</th></tr>${p.items.map(x =>
+          `<tr><td>${SEM(x.sem)}${esc(x.l)}</td><td>${esc(x.ultimo)}</td><td>${esc(x.prox)} h</td><td class="${x.faltan <= 0 ? 'malo' : ''}">${x.faltan <= 0 ? 'VENCIDO' : esc(x.faltan) + ' h'}</td></tr>`).join('')}</table></div>`).join('')}`;
+  } catch (err) { $('#pc').innerHTML = `<div class="alerta">No se pudo cargar: ${esc(err.message)}</div>`; }
 }
 
 /* ---------- Sincronización ---------- */
@@ -435,22 +676,16 @@ async function badge() {
 }
 async function sync(manual) {
   if (syncing) return;
-  if (!/^https:\/\/script\.google\.com\//.test(CONFIG.API_URL)) return badge();
+  const user = LS.get('user', null);
+  if (!user || !/^https:\/\/script\.google\.com\//.test(CONFIG.API_URL)) return badge();
   if (!navigator.onLine) { if (manual === true) alert('Sin señal. Se enviará cuando haya internet.'); return badge(); }
   syncing = true; badge();
   let error = '';
   try {
     const pend = (await DB.all()).sort((a, b) => a.fecha < b.fecha ? -1 : 1);
     for (const r of pend) {
-      const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 90000);
-      const user = LS.get('user', null);
-      if (!user) break;
       const {vals, fechaLocal, ...envio} = r;
-      envio.usuario = user.u; envio.clave = user.c;
-      const res = await fetch(CONFIG.API_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify(envio), signal:ctl.signal});
-      clearTimeout(to);
-      const j = await res.json();
+      const j = await api(envio);
       if (j.error === 'auth') {
         LS.set('user', null);
         alert('Su usuario o contraseña cambió. Ingrese de nuevo; los registros pendientes se conservan.');
@@ -459,6 +694,8 @@ async function sync(manual) {
       if (!j.ok) throw new Error(j.error || 'respuesta inválida');
       await DB.del(r.id);
     }
+    const est = LS.get('estado', null);   // refresca el estado de mantenimiento cada 30 min
+    if (!pend.length && (!est || Date.now() - (est.t || 0) > 30 * 60000)) await api({tipo:'estado'});
   } catch (err) { error = err.message; console.warn('sync', err); }
   syncing = false; await badge();
   if (manual === true) alert(error ? 'No se pudo enviar todo: ' + error : 'Todo enviado ✅');
